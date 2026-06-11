@@ -1,0 +1,721 @@
+-- Seed EllaWrightsArt sample artwork into Supabase
+-- Run in SQL Editor AFTER 001_artworks.sql
+-- Images remain at /artwork/* on the site until re-uploaded via admin
+
+delete from public.artworks;
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Alpha and Omega',
+  'alpha-and-omega',
+  'spiritual',
+  'Oil on Wood Panel',
+  '7" x 7"',
+  2026,
+  '',
+  '/artwork/alpha-and-omega.jpg',
+  'Alpha and Omega — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  1
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Sharing Truth No Other Way',
+  'sharing-truth-no-other-way',
+  'spiritual',
+  'Oil on Canvas',
+  '24" x 30"',
+  2025,
+  'With one bite of the fruit Eve gave the world the ability to decipher good from evil.',
+  '/artwork/sharing-truth-no-other-way.jpg',
+  'Sharing Truth No Other Way — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  2
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Worshipping the Living Water',
+  'worshipping-the-living-water',
+  'spiritual',
+  'Oil on Canvas',
+  '24" x 30"',
+  2025,
+  '',
+  '/artwork/worshipping-the-living-water.jpg',
+  'Worshipping the Living Water — original painting by Ella Wright',
+  'center 30%',
+  false,
+  false,
+  false,
+  3
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Brother of Jared',
+  'brother-of-jared',
+  'spiritual',
+  'Oil on Canvas',
+  '24" x 30"',
+  2024,
+  '',
+  '/artwork/brother-of-jared.jpg',
+  'Brother of Jared — original painting by Ella Wright',
+  'center 35%',
+  false,
+  false,
+  false,
+  4
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Supported on all Sides',
+  'supported-on-all-sides',
+  'spiritual',
+  'Oil on Canvas',
+  '24" x 30"',
+  2024,
+  'We are never alone throughout our successes, challenges, and mistakes. We have an infinite cheering squad in the angels around us and receive loving support from our Heavenly Parents as well as our loved ones on earth.',
+  '/artwork/supported-on-all-sides.jpg',
+  'Supported on all Sides — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  5
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Yearn to Learn',
+  'yearn-to-learn',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2024,
+  'I painted this after finishing a research paper on the effects of controversial literature. The figures made from the book pages represent empathy, culture, exploration, diversity, discovery, and critical thinking. Reading can be a powerful source of learning to understand the perspectives of the people living beside us.',
+  '/artwork/yearn-to-learn.jpg',
+  'Yearn to Learn — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  6
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Benefactor of Pioneer Greatness',
+  'benefactor-of-pioneer-greatness',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2023,
+  'My great grandmother always said, “You come from pioneer stock!” And she passed that down to her daughter and now my mom says it to me. I come from a heritage of strong women. This piece embodies the greatness we pass from one generation to another. My heritage includes a strong 52 year old woman who left Europe, traveled thousands of miles on foot on her own, and built a new world for her family. I am a part of that new world, full of opportunities and privilege as a result of her strength.',
+  '/artwork/benefactor-of-pioneer-greatness.jpg',
+  'Benefactor of Pioneer Greatness — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  7
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Heavenly Hands',
+  'heavenly-hands',
+  'spiritual',
+  'Oil on Canvas',
+  '24" x 30"',
+  2024,
+  'Heavenly Hands is a celebration of the divine within womanhood—the sacredness of nurturing life, the quiet strength found in surrender, and the beauty that blossoms in love.
+
+Through soft brushstrokes and radiant color, this piece honors the tender power of mothers—held by grace, guided by faith, and wrapped in the light of something greater.',
+  '/artwork/heavenly-hands.jpg',
+  'Heavenly Hands — oil painting by Ella Wright',
+  'center 32%',
+  false,
+  true,
+  true,
+  8
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Hello There',
+  'hello-there',
+  'spiritual',
+  'Oil on Canvas',
+  '24" x 30"',
+  2023,
+  '',
+  '/artwork/hello-there.jpg',
+  'Hello There — original painting by Ella Wright',
+  'center 30%',
+  false,
+  false,
+  false,
+  9
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Making Waves',
+  'making-waves',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2023,
+  '',
+  '/artwork/making-waves.jpg',
+  'Making Waves — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  10
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Perspective',
+  'perspective',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2023,
+  'We each bring our own perspectives, gifts, and color into the world. There is a reason we do not see in black and white. Connecting with each other brings beauty and strength.',
+  '/artwork/perspective.jpg',
+  'Perspective — original painting by Ella Wright',
+  'center 40%',
+  false,
+  false,
+  false,
+  11
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Prying Piglet',
+  'prying-piglet',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2023,
+  '',
+  '/artwork/prying-piglet.jpg',
+  'Prying Piglet — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  12
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'The Woman at the Well',
+  'the-woman-at-the-well',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2023,
+  '',
+  '/artwork/the-woman-at-the-well.jpg',
+  'The Woman at the Well — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  13
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'The Woman With the Issue of Blood',
+  'the-woman-with-the-issue-of-blood',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2023,
+  '',
+  '/artwork/the-woman-with-the-issue-of-blood.jpg',
+  'The Woman With the Issue of Blood — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  14
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Captain',
+  'captain',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/captain.jpg',
+  'Captain — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  15
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Coyote',
+  'coyote',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/coyote.jpg',
+  'Coyote — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  16
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Creation',
+  'creation',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  'I like to think that we helped God during the creation. This digital artwork shows a pre-mortal spirit watching and helping as God sculpts her face.',
+  '/artwork/creation.jpg',
+  'Creation — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  17
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Esther',
+  'esther',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  'Esther has been my favorite scripture story since I was little.',
+  '/artwork/esther.jpg',
+  'Esther — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  18
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Gerald',
+  'gerald',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/gerald.jpg',
+  'Gerald — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  19
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Go in Peace',
+  'go-in-peace',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/go-in-peace.jpg',
+  'Go in Peace — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  20
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Goldendoodle',
+  'goldendoodle',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/goldendoodle.jpg',
+  'Goldendoodle — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  21
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Happy pig',
+  'happy-pig',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  'Animals in color are always better!',
+  '/artwork/happy-pig.jpg',
+  'Happy pig — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  22
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Heavenly Mother',
+  'heavenly-mother',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  'This is how I imagine Heavenly Mother.',
+  '/artwork/heavenly-mother.jpg',
+  'Heavenly Mother — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  23
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'House of the Lord',
+  'house-of-the-lord',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  'Inspired by President Thomas S. Monson''s promise: "I know your lives are busy. I know that you have much to do. But I make you a promise that if you will go to the house of the Lord, you will be blessed; life will be better for you."',
+  '/artwork/house-of-the-lord.jpg',
+  'House of the Lord — original painting by Ella Wright',
+  'center 25%',
+  false,
+  false,
+  false,
+  24
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Let him in',
+  'let-him-in',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/let-him-in.jpg',
+  'Let him in — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  25
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Mary and Jesus',
+  'mary-and-jesus',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/mary-and-jesus.jpg',
+  'Mary and Jesus — original painting by Ella Wright',
+  'center 20%',
+  false,
+  false,
+  false,
+  26
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Meek',
+  'meek',
+  'spiritual',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/meek.jpg',
+  'Meek — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  27
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Peeking in',
+  'peeking-in',
+  'spiritual',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/peeking-in.jpg',
+  'Peeking in — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  28
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Quail',
+  'quail',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/quail.jpg',
+  'Quail — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  29
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Rainbow Cow',
+  'rainbow-cow',
+  'landscapes',
+  'Acrylic',
+  '24" x 30"',
+  2022,
+  '',
+  '/artwork/rainbow-cow.jpg',
+  'Rainbow Cow — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  30
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Rainbow Sloth',
+  'rainbow-sloth',
+  'landscapes',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  'I love rainbow animals!!!',
+  '/artwork/rainbow-sloth.jpg',
+  'Rainbow Sloth — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  31
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'The Service Quilt',
+  'the-service-quilt',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  'This painting shows an older woman teaching a girl to sew. Each pattern block represents a different way to serve others. In my life I have been taught by my parents, grandparents, teachers, and youth leaders how to serve and the joy it brings.',
+  '/artwork/the-service-quilt.jpg',
+  'The Service Quilt — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  32
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'Trying To Be Like Him',
+  'trying-to-be-like-him',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  'The animals following Jesus represent his traits. The little boy is working hard to imitate these.',
+  '/artwork/trying-to-be-like-him.jpg',
+  'Trying To Be Like Him — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  33
+);
+
+insert into public.artworks (
+  title, slug, category, medium, size, year, description,
+  image_url, image_alt, object_position,
+  is_available, is_featured, show_on_home, display_order
+) values (
+  'You Are Not Alone',
+  'you-are-not-alone',
+  'women-motherhood',
+  'Oil on Canvas',
+  '24" x 30"',
+  2022,
+  'He opened his call to discover where he would be assigned to serve a two year religious mission. He’s assigned to the same mission as his grandpa who passed before he was born. How ever present God’s hand is in the details of our lives. We are not alone.',
+  '/artwork/you-are-not-alone.jpg',
+  'You Are Not Alone — original painting by Ella Wright',
+  'center center',
+  false,
+  false,
+  false,
+  34
+);
