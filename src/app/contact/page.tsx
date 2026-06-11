@@ -3,7 +3,7 @@ import { Mail } from "lucide-react";
 import { sanitizeText, LIMITS } from "@/lib/validation";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/constants";
-import { getFeaturedArtwork } from "@/lib/artworks/service";
+import { getArtworkBySlug } from "@/lib/artworks/service";
 import { LayoutContainer } from "@/components/layout/LayoutContainer";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ContactForm } from "@/components/forms/ContactForm";
@@ -27,7 +27,9 @@ interface ContactPageProps {
 export default async function ContactPage({ searchParams }: ContactPageProps) {
   const params = await searchParams;
   const defaultSubject = sanitizeText(params.subject, LIMITS.subject);
-  const featured = await getFeaturedArtwork();
+  const sidebarArtwork =
+    (await getArtworkBySlug("perspective")) ??
+    (await getArtworkBySlug("worshipping-the-living-water"));
 
   return (
     <section className="py-8 md:py-12 relative overflow-hidden">
@@ -77,11 +79,13 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </div>
 
           <div className="hidden lg:block sticky top-24">
-            <FeaturedArtworkFrame
-              artwork={featured}
-              sizes="360px"
-              maxWidthClass="max-w-[320px] mx-auto"
-            />
+            {sidebarArtwork && (
+              <FeaturedArtworkFrame
+                artwork={sidebarArtwork}
+                sizes="360px"
+                maxWidthClass="max-w-[320px] mx-auto"
+              />
+            )}
           </div>
         </div>
 

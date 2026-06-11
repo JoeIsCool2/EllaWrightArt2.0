@@ -1,23 +1,21 @@
 import { redirect } from "next/navigation";
 import { getAdminArtworks } from "@/lib/artworks/service";
+import { getEnvSetupStatus } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
+import { AdminSetupPanel } from "@/components/admin/AdminSetupPanel";
 
 export default async function AdminPage() {
+  const envStatus = getEnvSetupStatus();
+
+  if (!isSupabaseConfigured()) {
+    return <AdminSetupPanel status={envStatus} />;
+  }
+
   const supabase = await createClient();
   if (!supabase) {
-    return (
-      <div className="text-center py-20">
-        <h1 className="font-serif text-2xl text-teal mb-4">
-          Admin Setup Required
-        </h1>
-        <p className="text-teal/60 max-w-md mx-auto leading-relaxed">
-          Connect Supabase to manage artwork. Add your environment variables,
-          run the database migration, and create an admin user. See README.md
-          for step-by-step instructions.
-        </p>
-      </div>
-    );
+    return <AdminSetupPanel status={envStatus} />;
   }
 
   const {

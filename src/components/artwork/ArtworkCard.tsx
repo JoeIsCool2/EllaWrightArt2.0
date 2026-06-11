@@ -14,9 +14,9 @@ export function ArtworkCard({ artwork, showArrow = false }: ArtworkCardProps) {
   return (
     <Link
       href={`/gallery/${artwork.slug}`}
-      className="group block bg-white rounded-2xl overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1"
+      className="group block h-full bg-white rounded-2xl overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-cream/40">
+      <div className="relative aspect-[4/5] overflow-hidden bg-ivory">
         <ProtectedArtworkImage
           src={artwork.image_url}
           alt={artwork.image_alt}
@@ -31,12 +31,12 @@ export function ArtworkCard({ artwork, showArrow = false }: ArtworkCardProps) {
           </span>
         )}
       </div>
-      <div className="p-4 md:p-5 flex items-start justify-between gap-3 min-h-[5.5rem]">
-        <div className="min-w-0">
-          <h3 className="font-serif text-lg text-teal group-hover:text-coral transition-colors line-clamp-2">
+      <div className="p-4 md:p-5 flex items-start justify-between gap-2 min-h-[6.5rem]">
+        <div className="min-w-0 flex-1">
+          <h3 className="font-serif text-base md:text-lg text-teal group-hover:text-coral transition-colors line-clamp-3 leading-snug">
             {artwork.title}
           </h3>
-          <p className="text-sm text-teal/60 mt-1 line-clamp-2">
+          <p className="text-xs md:text-sm text-teal/60 mt-2 line-clamp-2 leading-relaxed">
             {formatArtworkMeta(artwork)}
           </p>
         </div>

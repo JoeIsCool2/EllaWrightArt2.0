@@ -37,18 +37,21 @@ export function getCategoryPreviewArtworks(
     artworks.find((a) => a.category === category);
 
   const spiritual =
-    findBySlug("worshipping-the-living-water") ??
     findBySlug("brother-of-jared") ??
+    findBySlug("worshipping-the-living-water") ??
+    findBySlug("house-of-the-lord") ??
     findByCategory("spiritual");
 
   const landscapes =
-    findBySlug("perspective") ??
-    findBySlug("wildflower-valley") ??
+    findBySlug("making-waves") ??
+    findBySlug("quail") ??
+    findBySlug("coyote") ??
     findByCategory("landscapes");
 
   const motherhood =
     findBySlug("mary-and-jesus") ??
-    findBySlug("heavenly-hands") ??
+    findBySlug("benefactor-of-pioneer-greatness") ??
+    findBySlug("the-service-quilt") ??
     findByCategory("women-motherhood");
 
   return [
@@ -57,26 +60,32 @@ export function getCategoryPreviewArtworks(
       description:
         "Paintings that reflect faith, hope, and the divine within.",
       href: "/gallery?category=spiritual",
-      image: spiritual?.image_url ?? "/artwork/grace-in-bloom.jpg",
+      image: spiritual?.image_url ?? "/artwork/brother-of-jared.jpg",
       alt: spiritual?.image_alt ?? "Spiritual Works category preview",
-      objectPosition: normalizeObjectPosition(spiritual?.object_position),
+      objectPosition: normalizeObjectPosition(
+        spiritual?.object_position ?? "center 32%"
+      ),
     },
     {
       title: "Landscapes",
       description: "Capturing the light, color, and peace of Alpine, Utah.",
       href: "/gallery?category=landscapes",
-      image: landscapes?.image_url ?? "/artwork/wildflower-valley.jpg",
+      image: landscapes?.image_url ?? "/artwork/making-waves.jpg",
       alt: landscapes?.image_alt ?? "Landscapes category preview",
-      objectPosition: normalizeObjectPosition(landscapes?.object_position),
+      objectPosition: normalizeObjectPosition(
+        landscapes?.object_position ?? "center center"
+      ),
     },
     {
       title: "Women & Motherhood",
       description:
         "Honoring the strength, softness, and beauty of womanhood.",
       href: "/gallery?category=women-motherhood",
-      image: motherhood?.image_url ?? "/artwork/close-to-my-heart.jpg",
+      image: motherhood?.image_url ?? "/artwork/mary-and-jesus.jpg",
       alt: motherhood?.image_alt ?? "Women and Motherhood category preview",
-      objectPosition: normalizeObjectPosition(motherhood?.object_position),
+      objectPosition: normalizeObjectPosition(
+        motherhood?.object_position ?? "center 25%"
+      ),
     },
   ];
 }

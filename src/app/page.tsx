@@ -34,18 +34,18 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="py-8 md:py-12 lg:py-14">
+      <section className="py-6 md:py-12 lg:py-14 overflow-x-hidden">
         <LayoutContainer>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
-            <div className="animate-fade-in order-2 lg:order-1">
-              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[3.5rem] text-teal leading-[1.1] mb-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 lg:gap-16 items-center">
+            <div className="animate-fade-in text-center lg:text-left">
+              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[3.5rem] text-teal leading-[1.1] mb-4">
                 EllaWrightsArt
               </h1>
-              <p className="text-base md:text-lg text-teal/80 leading-relaxed mb-7 max-w-md">
+              <p className="text-base md:text-lg text-teal/80 leading-relaxed mb-6 max-w-md mx-auto lg:mx-0">
                 Oil paintings inspired by femininity, spirituality, motherhood,
                 and the landscapes of Alpine, Utah.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                 <Button href="/gallery" variant="primary" size="lg">
                   View Gallery
                 </Button>
@@ -55,11 +55,11 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="animate-fade-in-delay order-1 lg:order-2 max-w-[380px] mx-auto lg:max-w-none lg:mx-0 w-full">
+            <div className="animate-fade-in-delay w-full max-w-[340px] sm:max-w-[380px] mx-auto lg:max-w-[440px] lg:mx-0 lg:justify-self-end">
               <FeaturedArtworkFrame
                 artwork={featured}
                 priority
-                sizes="(max-width: 1024px) 90vw, 440px"
+                sizes="(max-width: 1024px) 85vw, 440px"
               />
               <ArtworkLabel
                 artwork={featured}
@@ -82,7 +82,7 @@ export default async function HomePage() {
         </LayoutContainer>
       </section>
 
-      <section className="py-8 md:py-14">
+      <section className="py-8 md:py-14 overflow-x-hidden">
         <LayoutContainer>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
             {categoryCards.map((card) => (
@@ -91,14 +91,15 @@ export default async function HomePage() {
                 href={card.href}
                 className="group bg-white rounded-2xl overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="relative aspect-[4/3] overflow-hidden bg-cream/40">
+                <div className="relative aspect-[4/3] overflow-hidden bg-ivory">
                   <ProtectedArtworkImage
                     src={card.image}
                     alt={card.alt}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     objectPosition={card.objectPosition}
-                    imageClassName="group-hover:scale-[1.03]"
+                    objectFit="cover"
+                    imageClassName="group-hover:scale-[1.02]"
                   />
                 </div>
                 <div className="p-5 flex items-end justify-between gap-3">
@@ -122,7 +123,7 @@ export default async function HomePage() {
         </LayoutContainer>
       </section>
 
-      <section className="relative py-14 md:py-20 overflow-hidden">
+      <section className="relative py-12 md:py-20 overflow-hidden">
         <div
           className="absolute inset-0 opacity-30"
           style={{

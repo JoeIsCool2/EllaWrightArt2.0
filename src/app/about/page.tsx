@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <section className="py-8 md:py-12">
+    <section className="py-8 md:py-12 overflow-x-hidden">
       <LayoutContainer>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-start">
           <div>
@@ -53,19 +53,43 @@ export default function AboutPage() {
             </blockquote>
           </div>
 
-          <div className="rounded-2xl overflow-hidden shadow-[var(--shadow-card)] bg-cream/40">
-            <div className="relative w-full aspect-[3/4] max-h-[min(72vh,640px)]">
-              <ProtectedArtworkImage
-                src="/artwork/supported-on-all-sides.jpg"
-                alt="Supported on all Sides — original oil painting by Ella Wright"
-                fill
-                priority
-                objectFit="contain"
-                objectPosition="center center"
-                sizes="(max-width: 1024px) 100vw, 45vw"
-                watermark={false}
-              />
-            </div>
+          <div className="grid grid-cols-2 gap-3 max-w-md lg:max-w-none mx-auto lg:mx-0 w-full">
+            {[
+              {
+                src: "/artwork/perspective.jpg",
+                alt: "Perspective — colorful landscape painting by Ella Wright",
+                position: "center 40%",
+              },
+              {
+                src: "/artwork/mary-and-jesus.jpg",
+                alt: "Mary and Jesus — motherhood painting by Ella Wright",
+                position: "center 25%",
+              },
+              {
+                src: "/artwork/worshipping-the-living-water.jpg",
+                alt: "Worshipping the Living Water — spiritual painting by Ella Wright",
+                position: "center 30%",
+                className: "col-span-2",
+              },
+            ].map((img) => (
+              <div
+                key={img.src}
+                className={`rounded-xl overflow-hidden shadow-[var(--shadow-soft)] bg-ivory ${img.className ?? ""}`}
+              >
+                <div className="relative aspect-[4/5] max-h-[220px] lg:max-h-[260px]">
+                  <ProtectedArtworkImage
+                    src={img.src}
+                    alt={img.alt}
+                    fill
+                    priority={img.src.includes("perspective")}
+                    objectFit="cover"
+                    objectPosition={img.position}
+                    sizes="(max-width: 1024px) 45vw, 25vw"
+                    watermark={false}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </LayoutContainer>

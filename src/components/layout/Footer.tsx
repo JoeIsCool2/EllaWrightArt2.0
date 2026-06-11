@@ -39,8 +39,8 @@ export function Footer() {
         aria-hidden="true"
       />
 
-      <LayoutContainer className="py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+      <LayoutContainer className="py-8 md:py-12 lg:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-8">
           <div>
             <h2 className="font-serif text-2xl text-teal mb-3">{SITE_NAME}</h2>
             <p className="text-teal/70 text-sm leading-relaxed max-w-xs">
@@ -101,7 +101,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-teal/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-teal/50">
+        <div className="mt-8 md:mt-10 pt-6 border-t border-teal/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-teal/50">
           <p>
             &copy; {year} {SITE_NAME}. All rights reserved.
           </p>

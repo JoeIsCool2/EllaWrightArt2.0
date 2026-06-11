@@ -50,7 +50,7 @@ async function fetchArtworksInternal(): Promise<ArtworkFetchResult> {
 
   if (error) {
     console.error("[artworks] Supabase fetch failed:", error.message);
-    return { artworks: SAMPLE_ARTWORKS, usingSampleData: true };
+    return { artworks: [], usingSampleData: false };
   }
 
   return {
@@ -93,7 +93,7 @@ export async function getArtworkBySlug(slug: string): Promise<Artwork | null> {
 }
 
 export async function getFeaturedArtwork(): Promise<Artwork> {
-  const { artworks, usingSampleData } = await fetchArtworksInternal();
+  const { artworks } = await fetchArtworksInternal();
   const featured =
     artworks.find((a) => a.is_featured) ??
     artworks.find((a) => a.slug === "heavenly-hands") ??
@@ -101,11 +101,9 @@ export async function getFeaturedArtwork(): Promise<Artwork> {
 
   if (featured) return featured;
 
-  if (!usingSampleData && artworks.length === 0) {
-    return SAMPLE_ARTWORKS.find((a) => a.slug === "heavenly-hands") ?? SAMPLE_ARTWORKS[0];
-  }
-
-  return SAMPLE_ARTWORKS.find((a) => a.slug === "heavenly-hands") ?? SAMPLE_ARTWORKS[0];
+  return (
+    SAMPLE_ARTWORKS.find((a) => a.slug === "heavenly-hands") ?? SAMPLE_ARTWORKS[0]
+  );
 }
 
 export async function getRelatedArtworks(

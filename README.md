@@ -137,15 +137,38 @@ Ella can manage artwork at `/admin`:
 
 ## Deploy on Vercel
 
+Live site: [https://ella-wright-art2-0.vercel.app](https://ella-wright-art2-0.vercel.app)
+
 1. Push your code to GitHub
 2. Import the repository in [Vercel](https://vercel.com)
-3. Add all environment variables from `.env.local`:
-   - `NEXT_PUBLIC_SITE_URL` — your production domain (e.g. `https://ellawrightsart.com`)
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `RESEND_API_KEY`
-   - `RESEND_FROM_EMAIL`
-4. Deploy
+3. Add these environment variables in **Vercel → Settings → Environment Variables** (Production + Preview):
+
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | `https://ella-wright-art2-0.vercel.app` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL only: `https://yourproject.supabase.co` (no `/rest/v1`) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon **public** key (Project Settings → API) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Optional server-only secret (not used by the app today; never expose to client code) |
+| `RESEND_API_KEY` | Resend API key for contact & commission forms |
+| `RESEND_FROM_EMAIL` | Verified sender, e.g. `EllaWrightsArt <hello@yourdomain.com>` |
+
+Contact form emails go to `ellawright.artist@gmail.com` (set in `src/lib/constants.ts`).
+
+4. **Redeploy** after adding env vars (Deployments → … → Redeploy)
+
+### Supabase Auth URLs (required for `/admin/login`)
+
+In Supabase → **Authentication** → **URL Configuration**:
+
+- **Site URL:** `https://ella-wright-art2-0.vercel.app`
+- **Redirect URLs:**
+  - `https://ella-wright-art2-0.vercel.app/**`
+  - `http://localhost:3000/**`
+  - `http://localhost:3001/**`
+
+### If `/admin` shows setup instructions
+
+The public site works with bundled sample artwork when Supabase is not configured. Admin requires Supabase. Check that both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set on Vercel, then redeploy.
 
 Vercel will automatically detect Next.js and configure the build. Gallery and artwork pages revalidate every 60 seconds so new uploads appear without a full redeploy.
 

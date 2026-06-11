@@ -14,7 +14,6 @@ export function normalizeSupabaseUrl(raw?: string): string | null {
   let url = stripQuotes(raw);
   if (!url) return null;
 
-  // Remove accidental API paths people copy from the dashboard
   url = url.replace(/\/rest\/v1\/?$/i, "");
   url = url.replace(/\/auth\/v1\/?$/i, "");
   url = url.replace(/\/+$/, "");
@@ -52,19 +51,25 @@ export function isSupabaseConfigured(): boolean {
 }
 
 export function getSupabaseConfigError(): string | null {
-  const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-  const rawKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
+  const missing: string[] = [];
 
-  if (!rawUrl || !rawKey) {
-    return "Supabase environment variables are missing.";
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()) {
+    missing.push("NEXT_PUBLIC_SUPABASE_URL");
+  }
+  if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()) {
+    missing.push("NEXT_PUBLIC_SUPABASE_ANON_KEY");
   }
 
-  const url = normalizeSupabaseUrl(rawUrl);
+  if (missing.length > 0) {
+    return `Missing: ${missing.join(", ")}. Add them in Vercel → Settings → Environment Variables, then redeploy.`;
+  }
+
+  const url = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
   if (!url) {
-    return 'NEXT_PUBLIC_SUPABASE_URL must be your project URL only, like https://yourproject.supabase.co — do not include /rest/v1 or a trailing slash.';
+    return "NEXT_PUBLIC_SUPABASE_URL must be your project URL only (https://yourproject.supabase.co) — do not include /rest/v1 or a trailing slash.";
   }
 
-  const key = normalizeSupabaseKey(rawKey);
+  const key = normalizeSupabaseKey(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   if (!key) {
     return "NEXT_PUBLIC_SUPABASE_ANON_KEY looks invalid. Copy the anon public key from Supabase → Project Settings → API.";
   }

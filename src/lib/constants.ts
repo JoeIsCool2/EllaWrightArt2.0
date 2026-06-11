@@ -1,7 +1,8 @@
 export const SITE_NAME = "EllaWrightsArt";
 export const SITE_DESCRIPTION =
   "Original oil paintings by Ella Wright exploring femininity, spirituality, motherhood, and landscapes from Alpine, Utah.";
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ellawrightsart.com";
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://ella-wright-art2-0.vercel.app";
 
 export const EMAIL = "ellawright.artist@gmail.com";
 export const INSTAGRAM_HANDLE = "@ellawright.art";
