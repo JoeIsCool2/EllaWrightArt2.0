@@ -1,36 +1,218 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EllaWrightsArt
+
+A professional online art portfolio for Ella Wright — view artwork, learn about the artist, contact her, and request commissions.
+
+Built with **Next.js 15** (App Router), **TypeScript**, **Tailwind CSS**, **Supabase**, and **Resend**.
+
+## Features
+
+- Beautiful, responsive gallery with category filtering
+- Individual artwork detail pages with SEO metadata
+- Working contact and commission forms (email via Resend)
+- Password-protected admin dashboard at `/admin`
+- Supabase-powered artwork management (upload, edit, delete, reorder)
+- Image protection (no right-click, no drag, subtle watermark)
+- Sample artwork data fallback when Supabase is not connected
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm
+
+### Install & Run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env.local` and fill in your values:
 
-## Learn More
+```bash
+cp .env.example .env.local
+```
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | Your site URL (e.g. `http://localhost:3000`) |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
+| `RESEND_API_KEY` | Resend API key for email |
+| `RESEND_FROM_EMAIL` | Verified sender email in Resend |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The public site works without Supabase using bundled sample artwork in `src/lib/artworks/sample-data.ts`. Once Supabase is connected, upload real artwork at `/admin` — the sample gallery is replaced automatically. Contact and commission forms require Resend to send email.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Sample vs. Live Artwork
+
+| State | Public gallery | Admin dashboard |
+|---|---|---|
+| No Supabase env vars | Shows 8 sample artworks | Shows setup instructions |
+| Supabase connected, empty table | Shows empty gallery | Prompts to add first artwork |
+| Supabase connected with uploads | Shows uploaded artwork only | Full CRUD management |
+
+## Supabase Setup
+
+### 1. Create a Supabase Project
+
+Go to [supabase.com](https://supabase.com) and create a new project.
+
+### 2. Run the Artworks Migration
+
+Open the **SQL Editor** in your Supabase dashboard and run the migration file:
+
+```
+supabase/migrations/001_artworks.sql
+```
+
+This creates the `artworks` table with Row Level Security policies.
+
+Optionally run `supabase/migrations/003_seed_sample_artworks.sql` to import all 34 bundled artworks (uses local `/artwork/` image paths until re-uploaded via admin).
+
+### 3. Create Storage Bucket
+
+1. Go to **Storage** in Supabase dashboard
+2. Create a new bucket named `artwork-images`
+3. Enable **Public bucket**
+4. Add storage policies (see comments at bottom of migration SQL file):
+   - Public read access for all users
+   - Authenticated users can upload, update, and delete
+
+### 4. Create Admin User
+
+1. Go to **Authentication** → **Users**
+2. Click **Add user** → **Create new user**
+3. Enter Ella's email and a secure password
+4. She will use these credentials to log in at `/admin/login`
+
+### 5. Add Environment Variables
+
+Add your Supabase URL and anon key to `.env.local`:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
+```
+
+Use the **Project URL** from Supabase → Project Settings → API. Do **not** include `/rest/v1` or a trailing slash.
+
+## Resend Setup (Contact & Commission Forms)
+
+1. Create an account at [resend.com](https://resend.com)
+2. Add and verify your domain (or use the sandbox for testing)
+3. Create an API key
+4. Add to `.env.local`:
+
+```
+RESEND_API_KEY=re_xxxxx
+RESEND_FROM_EMAIL=EllaWrightsArt <hello@yourdomain.com>
+```
+
+Forms send emails to `ellawright.artist@gmail.com`. Commission reference photos are uploaded to Supabase Storage when configured.
+
+## Admin Dashboard
+
+Ella can manage artwork at `/admin`:
+
+1. Log in at `/admin/login` with Supabase credentials
+2. View all artwork in a sortable list
+3. **Add Artwork** — upload image, fill details, preview, save
+4. **Edit** — update any artwork field
+5. **Delete** — remove artwork with confirmation
+6. **Reorder** — use up/down controls to change display order
+
+### Artwork Fields
+
+- Title, slug, category, medium, size, year
+- Description and image alt text
+- Available for purchase toggle
+- Featured artwork toggle
+- Show on homepage toggle
+- Display order
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push your code to GitHub
+2. Import the repository in [Vercel](https://vercel.com)
+3. Add all environment variables from `.env.local`:
+   - `NEXT_PUBLIC_SITE_URL` — your production domain (e.g. `https://ellawrightsart.com`)
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `RESEND_API_KEY`
+   - `RESEND_FROM_EMAIL`
+4. Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Vercel will automatically detect Next.js and configure the build. Gallery and artwork pages revalidate every 60 seconds so new uploads appear without a full redeploy.
+
+## Adding Payments Later (Stripe)
+
+Payments are intentionally not implemented yet. Here is where to add Stripe when ready:
+
+### Commission Deposits
+
+- **File:** `src/components/forms/CommissionForm.tsx`
+- After form submission success, redirect to a Stripe Checkout session
+- Create API route: `src/app/api/stripe/checkout/route.ts`
+- Add env vars: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+
+### Artwork Purchases
+
+- **File:** `src/components/artwork/ArtworkDetail.tsx`
+- Replace the "Contact Ella to inquire" link with a "Purchase" button for `is_available` artworks
+- Create checkout session with artwork metadata
+- Handle webhook at `src/app/api/stripe/webhook/route.ts` to mark artwork as sold
+
+### Recommended Stripe Flow
+
+```
+User clicks Purchase
+  → POST /api/stripe/checkout { artworkId }
+  → Create Stripe Checkout Session
+  → Redirect to Stripe
+  → Webhook confirms payment
+  → Update artwork.is_available = false
+  → Send confirmation email via Resend
+```
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── page.tsx            # Home
+│   ├── gallery/            # Gallery + artwork detail
+│   ├── commissions/        # Commission request
+│   ├── about/              # About Ella
+│   ├── contact/            # Contact form
+│   ├── admin/              # Admin dashboard
+│   └── api/                # API routes
+├── components/
+│   ├── layout/             # Navbar, Footer, etc.
+│   ├── artwork/            # Gallery components
+│   ├── forms/              # Contact & commission forms
+│   ├── admin/              # Admin components
+│   └── ui/                 # Shared UI components
+└── lib/
+    ├── artworks/           # Data layer + sample data
+    ├── supabase/           # Supabase clients
+    └── email.ts            # Resend email helper
+```
+
+## Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Production build
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
+
+## License
+
+Private — All artwork © Ella Wright.
+# EllaWrightArt2.0
