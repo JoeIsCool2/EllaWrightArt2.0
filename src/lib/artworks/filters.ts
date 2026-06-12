@@ -33,46 +33,50 @@ export interface CategoryPreview {
 const ABOUT_COLLAGE_SLUGS = [
   "heavenly-hands",
   "worshipping-the-living-water",
-  "making-waves",
   "mary-and-jesus",
+  "benefactor-of-pioneer-greatness",
 ] as const;
 
-/** Curated artworks for the About page 2×2 collage — one spiritual, landscape, and motherhood highlight. */
+const ABOUT_COLLAGE_FALLBACK_SLUGS = [
+  "heavenly-mother",
+  "the-woman-at-the-well",
+  "brother-of-jared",
+  "the-service-quilt",
+  "house-of-the-lord",
+  "the-woman-with-the-issue-of-blood",
+] as const;
+
+/** Curated artworks for the About page 2×2 collage — spiritual, feminine, and motherhood themes only. */
 export function getAboutCollageArtworks(artworks: Artwork[]): Artwork[] {
   const used = new Set<string>();
   const selected: Artwork[] = [];
 
-  for (const slug of ABOUT_COLLAGE_SLUGS) {
-    const artwork = artworks.find((a) => a.slug === slug);
+  const add = (artwork: Artwork | undefined) => {
     if (artwork && !used.has(artwork.id)) {
       used.add(artwork.id);
       selected.push(artwork);
     }
+  };
+
+  for (const slug of ABOUT_COLLAGE_SLUGS) {
+    add(artworks.find((a) => a.slug === slug));
+  }
+
+  for (const slug of ABOUT_COLLAGE_FALLBACK_SLUGS) {
+    if (selected.length >= 4) break;
+    add(artworks.find((a) => a.slug === slug));
   }
 
   if (selected.length < 4) {
-    const categories: Artwork["category"][] = [
-      "spiritual",
-      "landscapes",
-      "women-motherhood",
-    ];
-    for (const category of categories) {
+    for (const category of ["spiritual", "women-motherhood"] as const) {
       if (selected.length >= 4) break;
-      const extra = artworks.find(
-        (a) => a.category === category && !used.has(a.id)
-      );
-      if (extra) {
-        used.add(extra.id);
-        selected.push(extra);
+      for (const artwork of artworks) {
+        if (selected.length >= 4) break;
+        if (artwork.category === category && !used.has(artwork.id)) {
+          add(artwork);
+        }
       }
     }
-  }
-
-  while (selected.length < 4) {
-    const extra = artworks.find((a) => !used.has(a.id));
-    if (!extra) break;
-    used.add(extra.id);
-    selected.push(extra);
   }
 
   return selected.slice(0, 4);

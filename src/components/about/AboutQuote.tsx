@@ -9,7 +9,7 @@ export function AboutQuote({ className }: AboutQuoteProps) {
   return (
     <figure
       className={cn(
-        "bg-white/90 rounded-2xl p-6 md:p-7 shadow-[var(--shadow-soft)] border border-teal/[0.05]",
+        "bg-white/90 rounded-2xl p-5 md:p-6 shadow-[var(--shadow-soft)] border border-teal/[0.05] mt-1",
         className
       )}
     >

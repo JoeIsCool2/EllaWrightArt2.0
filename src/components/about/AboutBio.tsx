@@ -8,7 +8,7 @@ export function AboutBio({ className }: AboutBioProps) {
   return (
     <div
       className={cn(
-        "mt-5 md:mt-6 space-y-5 text-teal/80 leading-[1.75] max-w-prose text-[15px] md:text-base",
+        "space-y-5 text-teal/80 leading-[1.75] max-w-prose text-[15px] md:text-base",
         className
       )}
     >

@@ -8,7 +8,10 @@ interface AboutHeroProps {
 export function AboutHero({ className }: AboutHeroProps) {
   return (
     <header className={cn("max-w-xl", className)}>
-      <h1 className="font-serif text-3xl md:text-4xl lg:text-[2.75rem] text-teal leading-[1.15] mb-3">
+      <h1
+        id="about-heading"
+        className="font-serif text-3xl md:text-4xl lg:text-[2.75rem] text-teal leading-[1.15] mb-3"
+      >
         About Ella
       </h1>
       <BrushDivider width="w-16" />
