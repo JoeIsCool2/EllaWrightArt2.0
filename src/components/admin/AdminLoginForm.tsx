@@ -75,7 +75,7 @@ export function AdminLoginForm() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <p className="text-xs uppercase tracking-[0.2em] text-teal/45 mb-2">
-            EllaWrightsArt
+            EllaWrightArt
           </p>
           <h1 className="font-serif text-3xl text-teal mb-2">Admin Login</h1>
           <p className="text-teal/60 text-sm">

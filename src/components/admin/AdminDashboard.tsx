@@ -66,7 +66,7 @@ export function AdminDashboard({ artworks }: AdminDashboardProps) {
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div>
           <h1 className="font-serif text-3xl sm:text-4xl text-teal mb-2">
-            EllaWrightsArt Admin
+            EllaWrightArt Admin
           </h1>
           <p className="text-teal/65 max-w-xl leading-relaxed">
             Manage artwork, images, availability, and homepage features. Changes

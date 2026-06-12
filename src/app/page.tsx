@@ -11,10 +11,10 @@ import { HomeHero } from "@/components/home/HomeHero";
 import { HomeCollections } from "@/components/home/HomeCollections";
 
 export const metadata: Metadata = {
-  title: "EllaWrightsArt",
+  title: "EllaWrightArt",
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: "EllaWrightsArt",
+    title: "EllaWrightArt",
     description: SITE_DESCRIPTION,
     images: [{ url: "/artwork/heavenly-hands.jpg" }],
   },

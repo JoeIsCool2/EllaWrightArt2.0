@@ -88,7 +88,7 @@ export function ProtectedArtworkImage({
           aria-hidden="true"
         >
           <span className="text-white/15 text-[10px] font-serif select-none tracking-wide">
-            EllaWrightsArt
+            EllaWrightArt
           </span>
         </div>
       )}

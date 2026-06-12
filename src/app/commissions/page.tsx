@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Request a custom oil painting commission from Ella Wright. Each piece is created with care and intention.",
   openGraph: {
-    title: "Commissions | EllaWrightsArt",
+    title: "Commissions | EllaWrightArt",
     description:
       "Request a custom oil painting commission from Ella Wright. Each piece is created with care and intention.",
   },

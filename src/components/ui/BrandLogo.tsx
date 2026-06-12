@@ -2,7 +2,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export const BRAND_LOGO_PATH = "/brand/ella-wrights-art-logo.png";
-export const BRAND_LOGO_ALT = "EllaWrightsArt logo";
+export const BRAND_LOGO_ALT = "EllaWrightArt logo";
 
 const LOGO_INTRINSIC = 500;
 

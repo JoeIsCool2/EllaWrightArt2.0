@@ -1,4 +1,4 @@
--- EllaWrightsArt: Artworks table migration
+-- EllaWrightArt: Artworks table migration
 -- Run this in your Supabase SQL Editor
 
 create table if not exists public.artworks (

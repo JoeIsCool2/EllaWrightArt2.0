@@ -1,4 +1,4 @@
--- EllaWrightsArt: Storage bucket + policies for artwork-images
+-- EllaWrightArt: Storage bucket + policies for artwork-images
 -- Run in Supabase SQL Editor after 001_artworks.sql
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)

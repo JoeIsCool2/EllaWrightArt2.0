@@ -1,4 +1,4 @@
-# EllaWrightsArt
+# EllaWrightArt
 
 A professional online art portfolio for Ella Wright — view artwork, learn about the artist, contact her, and request commissions.
 
@@ -146,7 +146,7 @@ Missing variables are listed by name on `/admin` (no secret values shown). Commo
 
 ```
 RESEND_API_KEY=re_xxxxx
-RESEND_FROM_EMAIL=EllaWrightsArt <hello@yourdomain.com>
+RESEND_FROM_EMAIL=EllaWrightArt <hello@yourdomain.com>
 CONTACT_EMAIL=ellawright.artist@gmail.com
 ```
 

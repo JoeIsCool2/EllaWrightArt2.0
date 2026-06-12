@@ -1,4 +1,4 @@
-export const SITE_NAME = "EllaWrightsArt";
+export const SITE_NAME = "EllaWrightArt";
 export const SITE_DESCRIPTION =
   "Original oil paintings by Ella Wright exploring femininity, spirituality, motherhood, and landscapes from Alpine, Utah.";
 export const SITE_URL =

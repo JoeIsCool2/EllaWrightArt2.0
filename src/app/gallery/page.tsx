@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Original oil paintings inspired by femininity, spirituality, and the landscapes of Alpine, Utah.",
   openGraph: {
-    title: "Gallery | EllaWrightsArt",
+    title: "Gallery | EllaWrightArt",
     description: SITE_DESCRIPTION,
   },
 };

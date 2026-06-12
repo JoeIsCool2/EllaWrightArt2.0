@@ -92,7 +92,7 @@ function normalizeFromInput(value: string): string {
 
 /** Resend `from` address — server only. Falls back safely if env format is wrong. */
 export function getResendFromEmail(): string {
-  const fallback = "EllaWrightsArt <onboarding@resend.dev>";
+  const fallback = "EllaWrightArt <onboarding@resend.dev>";
   const raw = process.env.RESEND_FROM_EMAIL?.trim();
 
   if (!raw || isPlaceholder(raw)) {
@@ -102,7 +102,7 @@ export function getResendFromEmail(): string {
   const value = normalizeFromInput(stripWrappingQuotes(raw));
 
   if (RESEND_EMAIL_ONLY.test(value)) {
-    return `EllaWrightsArt <${value}>`;
+    return `EllaWrightArt <${value}>`;
   }
 
   if (RESEND_NAMED_FORMAT.test(value)) {
@@ -122,7 +122,7 @@ export function getResendFromEmail(): string {
     /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/
   );
   if (emailMatch) {
-    return `EllaWrightsArt <${emailMatch[0]}>`;
+    return `EllaWrightArt <${emailMatch[0]}>`;
   }
 
   console.warn(

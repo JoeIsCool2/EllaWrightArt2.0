@@ -48,12 +48,12 @@ export async function sendEmail({
   if (error) {
     if (error.message.includes("Invalid `from` field")) {
       throw new Error(
-        "Email sender address is invalid. In Vercel, delete RESEND_FROM_EMAIL and redeploy to use the default test sender, or set it exactly to: EllaWrightsArt <onboarding@resend.dev>"
+        "Email sender address is invalid. In Vercel, delete RESEND_FROM_EMAIL and redeploy to use the default test sender, or set it exactly to: EllaWrightArt <onboarding@resend.dev>"
       );
     }
     if (error.message.includes("domain") || error.message.includes("verified")) {
       throw new Error(
-        "The sender domain is not verified in Resend yet. For testing, set RESEND_FROM_EMAIL to EllaWrightsArt <onboarding@resend.dev> and redeploy."
+        "The sender domain is not verified in Resend yet. For testing, set RESEND_FROM_EMAIL to EllaWrightArt <onboarding@resend.dev> and redeploy."
       );
     }
     throw new Error(error.message);

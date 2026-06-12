@@ -22,7 +22,7 @@ export function Navbar() {
         <Link
           href="/"
           className="relative flex items-center shrink-0 min-w-0 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/40 rounded-sm"
-          aria-label="EllaWrightsArt home"
+          aria-label="EllaWrightArt home"
         >
           <BrandLogo variant="nav" priority />
         </Link>

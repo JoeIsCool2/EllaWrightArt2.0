@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     "Contact Ella Wright for artwork inquiries, commissions, and purchases.",
   openGraph: {
-    title: "Contact | EllaWrightsArt",
+    title: "Contact | EllaWrightArt",
     description:
       "Contact Ella Wright for artwork inquiries, commissions, and purchases.",
   },

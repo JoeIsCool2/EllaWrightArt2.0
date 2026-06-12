@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     "Learn about Ella Wright, a studio art student at the University of Utah creating oil paintings inspired by femininity, spirituality, and motherhood.",
   openGraph: {
-    title: "About | EllaWrightsArt",
+    title: "About | EllaWrightArt",
     description:
       "Learn about Ella Wright, a studio art student at the University of Utah creating oil paintings inspired by femininity, spirituality, and motherhood.",
   },
