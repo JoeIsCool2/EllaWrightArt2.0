@@ -22,6 +22,7 @@ export function isValidGalleryCategory(category: string): boolean {
 
 export interface CategoryPreview {
   title: string;
+  subtitle: string;
   description: string;
   href: string;
   image: string;
@@ -57,6 +58,7 @@ export function getCategoryPreviewArtworks(
   return [
     {
       title: "Spiritual Works",
+      subtitle: "FAITH, STILLNESS & LIGHT",
       description:
         "Paintings that reflect faith, hope, and the divine within.",
       href: "/gallery?category=spiritual",
@@ -68,6 +70,7 @@ export function getCategoryPreviewArtworks(
     },
     {
       title: "Landscapes",
+      subtitle: "ALPINE, UTAH & BEYOND",
       description: "Capturing the light, color, and peace of Alpine, Utah.",
       href: "/gallery?category=landscapes",
       image: landscapes?.image_url ?? "/artwork/making-waves.jpg",
@@ -78,6 +81,7 @@ export function getCategoryPreviewArtworks(
     },
     {
       title: "Women & Motherhood",
+      subtitle: "STRENGTH, LOVE & GRACE",
       description:
         "Honoring the strength, softness, and beauty of womanhood.",
       href: "/gallery?category=women-motherhood",
