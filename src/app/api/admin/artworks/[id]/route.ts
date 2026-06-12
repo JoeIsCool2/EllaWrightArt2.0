@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/supabase/admin";
+import { ensureUniqueSlug, friendlyDatabaseError } from "@/lib/artworks/admin-api";
+import { deleteArtworkStorageFile } from "@/lib/storage/artwork-images";
 import { sanitizeText, LIMITS } from "@/lib/validation";
 
 interface RouteParams {
@@ -13,6 +15,14 @@ function validateArtworkBody(body: Record<string, unknown>): string | null {
       return "Image must be uploaded to storage before saving.";
     }
   }
+
+  if (body.year !== undefined) {
+    const year = Number(body.year);
+    if (!year || year < 1900 || year > 2100) {
+      return "Please enter a valid year.";
+    }
+  }
+
   return null;
 }
 
@@ -27,30 +37,51 @@ export async function PUT(request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
+    const { data: existing, error: fetchError } = await supabase
+      .from("artworks")
+      .select("image_url, slug")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !existing) {
+      return NextResponse.json({ error: "Artwork not found." }, { status: 404 });
+    }
+
     const updates: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
     };
 
     if (body.title !== undefined) updates.title = sanitizeText(body.title, LIMITS.name);
-    if (body.slug !== undefined) updates.slug = sanitizeText(body.slug, 120);
+    if (body.slug !== undefined) {
+      updates.slug = await ensureUniqueSlug(
+        supabase,
+        sanitizeText(body.slug, 120),
+        id
+      );
+    }
     if (body.category !== undefined) updates.category = body.category;
     if (body.medium !== undefined) updates.medium = sanitizeText(body.medium, 100);
     if (body.size !== undefined) updates.size = sanitizeText(body.size, LIMITS.size);
     if (body.year !== undefined) updates.year = Number(body.year);
-    if (body.description !== undefined)
+    if (body.description !== undefined) {
       updates.description = sanitizeText(body.description, LIMITS.description);
-    if (body.image_url !== undefined)
+    }
+    if (body.image_url !== undefined) {
       updates.image_url = sanitizeText(body.image_url, 2048);
-    if (body.image_alt !== undefined)
+    }
+    if (body.image_alt !== undefined) {
       updates.image_alt = sanitizeText(body.image_alt, 200);
-    if (body.object_position !== undefined)
+    }
+    if (body.object_position !== undefined) {
       updates.object_position =
         sanitizeText(body.object_position, 80) || "center center";
+    }
     if (body.is_available !== undefined) updates.is_available = Boolean(body.is_available);
     if (body.is_featured !== undefined) updates.is_featured = Boolean(body.is_featured);
     if (body.show_on_home !== undefined) updates.show_on_home = Boolean(body.show_on_home);
-    if (body.display_order !== undefined)
+    if (body.display_order !== undefined) {
       updates.display_order = Number(body.display_order);
+    }
 
     const { data, error } = await supabase
       .from("artworks")
@@ -60,7 +91,17 @@ export async function PUT(request: Request, { params }: RouteParams) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error("[artworks] Update failed:", error.message);
+      return NextResponse.json(
+        { error: friendlyDatabaseError(error.message) },
+        { status: 400 }
+      );
+    }
+
+    const newImageUrl =
+      typeof updates.image_url === "string" ? updates.image_url : null;
+    if (newImageUrl && newImageUrl !== existing.image_url) {
+      await deleteArtworkStorageFile(existing.image_url);
     }
 
     return NextResponse.json(data);
@@ -78,11 +119,27 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     const { supabase } = await requireAuth();
     const { id } = await params;
 
+    const { data: existing, error: fetchError } = await supabase
+      .from("artworks")
+      .select("image_url")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !existing) {
+      return NextResponse.json({ error: "Artwork not found." }, { status: 404 });
+    }
+
     const { error } = await supabase.from("artworks").delete().eq("id", id);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error("[artworks] Delete failed:", error.message);
+      return NextResponse.json(
+        { error: friendlyDatabaseError(error.message) },
+        { status: 400 }
+      );
     }
+
+    await deleteArtworkStorageFile(existing.image_url);
 
     return NextResponse.json({ success: true });
   } catch (err) {

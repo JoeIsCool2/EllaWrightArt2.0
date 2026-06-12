@@ -2,7 +2,7 @@
 
 A professional online art portfolio for Ella Wright — view artwork, learn about the artist, contact her, and request commissions.
 
-Built with **Next.js 15** (App Router), **TypeScript**, **Tailwind CSS**, **Supabase**, and **Resend**.
+Built with **Next.js 16** (App Router), **TypeScript**, **Tailwind CSS**, **Supabase**, and **Resend**.
 
 ## Features
 
@@ -40,21 +40,20 @@ cp .env.example .env.local
 
 | Variable | Description |
 |---|---|
-| `NEXT_PUBLIC_SITE_URL` | Your site URL (e.g. `http://localhost:3000`) |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
-| `RESEND_API_KEY` | Resend API key for email |
-| `RESEND_FROM_EMAIL` | Verified sender email in Resend |
+| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` locally, production URL on Vercel |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL only (no `/rest/v1`) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon public key (safe for client) |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Server-only** — required for admin image uploads |
+| `RESEND_API_KEY` | Resend API key for contact & commission forms |
+| `RESEND_FROM_EMAIL` | Verified sender address |
+| `CONTACT_EMAIL` | Where form submissions are delivered |
 
-The public site works without Supabase using bundled sample artwork in `src/lib/artworks/sample-data.ts`. Once Supabase is connected, upload real artwork at `/admin` — the sample gallery is replaced automatically. Contact and commission forms require Resend to send email.
+**Important:**
+- `NEXT_PUBLIC_*` variables are available in the browser.
+- `SUPABASE_SERVICE_ROLE_KEY` must **never** be exposed to client code or `NEXT_PUBLIC_*` vars.
+- Restart the dev server after changing `.env.local`.
 
-### Sample vs. Live Artwork
-
-| State | Public gallery | Admin dashboard |
-|---|---|---|
-| No Supabase env vars | Shows 8 sample artworks | Shows setup instructions |
-| Supabase connected, empty table | Shows empty gallery | Prompts to add first artwork |
-| Supabase connected with uploads | Shows uploaded artwork only | Full CRUD management |
+The public site works without Supabase using bundled sample artwork. Once Supabase is connected, upload real artwork at `/admin` — the sample gallery is replaced automatically.
 
 ## Supabase Setup
 
@@ -62,44 +61,81 @@ The public site works without Supabase using bundled sample artwork in `src/lib/
 
 Go to [supabase.com](https://supabase.com) and create a new project.
 
-### 2. Run the Artworks Migration
+### 2. Run Migrations
 
-Open the **SQL Editor** in your Supabase dashboard and run the migration file:
+Open the **SQL Editor** in your Supabase dashboard and run these files **in order**:
 
-```
-supabase/migrations/001_artworks.sql
-```
+1. `supabase/migrations/001_artworks.sql` — artworks table + RLS
+2. `supabase/migrations/002_object_position.sql` — safe if already in 001
+3. `supabase/migrations/004_storage_bucket.sql` — `artwork-images` bucket + storage policies
 
-This creates the `artworks` table with Row Level Security policies.
+Optionally run `003_seed_sample_artworks.sql` to import bundled sample artworks (uses local `/artwork/` paths until re-uploaded via admin). **Warning:** this deletes existing rows in `artworks`.
 
-Optionally run `supabase/migrations/003_seed_sample_artworks.sql` to import all 34 bundled artworks (uses local `/artwork/` image paths until re-uploaded via admin).
-
-### 3. Create Storage Bucket
-
-1. Go to **Storage** in Supabase dashboard
-2. Create a new bucket named `artwork-images`
-3. Enable **Public bucket**
-4. Add storage policies (see comments at bottom of migration SQL file):
-   - Public read access for all users
-   - Authenticated users can upload, update, and delete
-
-### 4. Create Admin User
+### 3. Create Admin User
 
 1. Go to **Authentication** → **Users**
 2. Click **Add user** → **Create new user**
 3. Enter Ella's email and a secure password
-4. She will use these credentials to log in at `/admin/login`
+4. Use these credentials at `/admin/login`
+
+### 4. Configure Auth URLs
+
+In **Authentication** → **URL Configuration**:
+
+- **Site URL:** `https://ella-wright-art2-0.vercel.app` (or `http://localhost:3000` for local)
+- **Redirect URLs:**
+  - `https://ella-wright-art2-0.vercel.app/**`
+  - `http://localhost:3000/**`
+  - `http://localhost:3001/**`
 
 ### 5. Add Environment Variables
-
-Add your Supabase URL and anon key to `.env.local`:
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbG...
 ```
 
-Use the **Project URL** from Supabase → Project Settings → API. Do **not** include `/rest/v1` or a trailing slash.
+Use the **Project URL** from Supabase → Project Settings → API. Do **not** include `/rest/v1`.
+
+## Admin Dashboard
+
+Ella can manage artwork at `/admin` without touching code.
+
+### Login
+
+1. Visit `/admin/login`
+2. Sign in with the Supabase user created above
+3. You'll land on the artwork dashboard
+
+### What Ella Can Do
+
+| Action | How |
+|---|---|
+| **Add artwork** | Add Artwork → upload image, fill details, preview, save |
+| **Edit** | Edit icon on any artwork row |
+| **Replace image** | Edit → Replace Image (old storage file removed when safe) |
+| **Adjust card crop** | Focal point presets + live gallery card preview |
+| **Reorder** | Up/down arrows on the dashboard list |
+| **Delete** | Trash icon → confirmation modal |
+| **Featured / home** | Toggles on the artwork form |
+
+### Image Uploads
+
+- Uploads go to Supabase Storage bucket `artwork-images`
+- Path format: `artworks/{slug}/{slug}-{timestamp}.jpg`
+- Accepted: JPG, JPEG, PNG, WebP · Max 10 MB
+- Uploads use a **server API route** with `SUPABASE_SERVICE_ROLE_KEY` (never sent to the browser)
+- Public gallery images use the storage public URL
+
+### If Admin Shows Setup Instructions
+
+Missing variables are listed by name on `/admin` (no secret values shown). Common fixes:
+
+1. Add all env vars in Vercel → Settings → Environment Variables
+2. Run migration `004_storage_bucket.sql`
+3. **Redeploy** after adding env vars
+4. Confirm Supabase Auth URLs are configured
 
 ## Resend Setup (Contact & Commission Forms)
 
@@ -111,29 +147,10 @@ Use the **Project URL** from Supabase → Project Settings → API. Do **not** i
 ```
 RESEND_API_KEY=re_xxxxx
 RESEND_FROM_EMAIL=EllaWrightsArt <hello@yourdomain.com>
+CONTACT_EMAIL=ellawright.artist@gmail.com
 ```
 
-Forms send emails to `ellawright.artist@gmail.com`. Commission reference photos are uploaded to Supabase Storage when configured.
-
-## Admin Dashboard
-
-Ella can manage artwork at `/admin`:
-
-1. Log in at `/admin/login` with Supabase credentials
-2. View all artwork in a sortable list
-3. **Add Artwork** — upload image, fill details, preview, save
-4. **Edit** — update any artwork field
-5. **Delete** — remove artwork with confirmation
-6. **Reorder** — use up/down controls to change display order
-
-### Artwork Fields
-
-- Title, slug, category, medium, size, year
-- Description and image alt text
-- Available for purchase toggle
-- Featured artwork toggle
-- Show on homepage toggle
-- Display order
+Forms send emails to `CONTACT_EMAIL` (defaults to `ellawright.artist@gmail.com`).
 
 ## Deploy on Vercel
 
@@ -141,89 +158,48 @@ Live site: [https://ella-wright-art2-0.vercel.app](https://ella-wright-art2-0.ve
 
 1. Push your code to GitHub
 2. Import the repository in [Vercel](https://vercel.com)
-3. Add these environment variables in **Vercel → Settings → Environment Variables** (Production + Preview):
+3. Add environment variables in **Vercel → Settings → Environment Variables** (Production + Preview):
 
-| Variable | Description |
+| Variable | Value |
 |---|---|
 | `NEXT_PUBLIC_SITE_URL` | `https://ella-wright-art2-0.vercel.app` |
-| `NEXT_PUBLIC_SUPABASE_URL` | Project URL only: `https://yourproject.supabase.co` (no `/rest/v1`) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon **public** key (Project Settings → API) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Optional server-only secret (not used by the app today; never expose to client code) |
-| `RESEND_API_KEY` | Resend API key for contact & commission forms |
-| `RESEND_FROM_EMAIL` | Verified sender, e.g. `EllaWrightsArt <hello@yourdomain.com>` |
-
-Contact form emails go to `ellawright.artist@gmail.com` (set in `src/lib/constants.ts`).
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://yourproject.supabase.co` (no `/rest/v1`) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-only) |
+| `RESEND_API_KEY` | Resend API key |
+| `RESEND_FROM_EMAIL` | Verified sender |
+| `CONTACT_EMAIL` | `ellawright.artist@gmail.com` |
 
 4. **Redeploy** after adding env vars (Deployments → … → Redeploy)
+5. Run Supabase migrations if not already done
+6. Create admin user and configure Auth URLs (see above)
+7. Test `/admin` → login → upload → confirm public gallery updates
 
-### Supabase Auth URLs (required for `/admin/login`)
+Gallery and artwork pages revalidate every 60 seconds so new uploads appear without a full redeploy.
 
-In Supabase → **Authentication** → **URL Configuration**:
+## Sample vs. Live Artwork
 
-- **Site URL:** `https://ella-wright-art2-0.vercel.app`
-- **Redirect URLs:**
-  - `https://ella-wright-art2-0.vercel.app/**`
-  - `http://localhost:3000/**`
-  - `http://localhost:3001/**`
-
-### If `/admin` shows setup instructions
-
-The public site works with bundled sample artwork when Supabase is not configured. Admin requires Supabase. Check that both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set on Vercel, then redeploy.
-
-Vercel will automatically detect Next.js and configure the build. Gallery and artwork pages revalidate every 60 seconds so new uploads appear without a full redeploy.
-
-## Adding Payments Later (Stripe)
-
-Payments are intentionally not implemented yet. Here is where to add Stripe when ready:
-
-### Commission Deposits
-
-- **File:** `src/components/forms/CommissionForm.tsx`
-- After form submission success, redirect to a Stripe Checkout session
-- Create API route: `src/app/api/stripe/checkout/route.ts`
-- Add env vars: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-
-### Artwork Purchases
-
-- **File:** `src/components/artwork/ArtworkDetail.tsx`
-- Replace the "Contact Ella to inquire" link with a "Purchase" button for `is_available` artworks
-- Create checkout session with artwork metadata
-- Handle webhook at `src/app/api/stripe/webhook/route.ts` to mark artwork as sold
-
-### Recommended Stripe Flow
-
-```
-User clicks Purchase
-  → POST /api/stripe/checkout { artworkId }
-  → Create Stripe Checkout Session
-  → Redirect to Stripe
-  → Webhook confirms payment
-  → Update artwork.is_available = false
-  → Send confirmation email via Resend
-```
+| State | Public gallery | Admin dashboard |
+|---|---|---|
+| No Supabase env vars | Shows bundled sample artworks | Shows setup instructions |
+| Supabase connected, empty table | Empty gallery | Prompts to add first artwork |
+| Supabase connected with uploads | Shows uploaded artwork only | Full CRUD management |
 
 ## Project Structure
 
 ```
 src/
-├── app/                    # Next.js App Router pages
-│   ├── page.tsx            # Home
-│   ├── gallery/            # Gallery + artwork detail
-│   ├── commissions/        # Commission request
-│   ├── about/              # About Ella
-│   ├── contact/            # Contact form
-│   ├── admin/              # Admin dashboard
-│   └── api/                # API routes
-├── components/
-│   ├── layout/             # Navbar, Footer, etc.
-│   ├── artwork/            # Gallery components
-│   ├── forms/              # Contact & commission forms
-│   ├── admin/              # Admin components
-│   └── ui/                 # Shared UI components
+├── app/
+│   ├── admin/              # Admin dashboard + login
+│   └── api/
+│       ├── admin/          # Artwork CRUD + image upload
+│       ├── contact/
+│       └── commission/
+├── components/admin/       # Admin UI components
 └── lib/
     ├── artworks/           # Data layer + sample data
-    ├── supabase/           # Supabase clients
-    └── email.ts            # Resend email helper
+    ├── storage/            # Storage helpers (server-only)
+    └── supabase/           # Supabase clients
 ```
 
 ## Scripts
@@ -238,4 +214,3 @@ npm run lint     # Run ESLint
 ## License
 
 Private — All artwork © Ella Wright.
-# EllaWrightArt2.0

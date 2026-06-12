@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { getSupabaseEnv } from "@/lib/supabase/env";
+import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/supabase/env";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -8,14 +8,24 @@ export async function middleware(request: NextRequest) {
   const isAdminRoute =
     pathname === "/admin" || pathname.startsWith("/admin/");
   const isLoginRoute = pathname === "/admin/login";
+  const isAdminHome = pathname === "/admin";
 
   if (!isAdminRoute || isLoginRoute) {
     return NextResponse.next();
   }
 
-  const env = getSupabaseEnv();
+  if (!isSupabaseConfigured()) {
+    if (!isAdminHome) {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
+    return NextResponse.next();
+  }
 
+  const env = getSupabaseEnv();
   if (!env) {
+    if (!isAdminHome) {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
     return NextResponse.next();
   }
 

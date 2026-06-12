@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminSetupPanel } from "@/components/admin/AdminSetupPanel";
+import { AdminUploadNotice } from "@/components/admin/AdminUploadNotice";
 
 export default async function AdminPage() {
   const envStatus = getEnvSetupStatus();
@@ -28,5 +29,10 @@ export default async function AdminPage() {
 
   const artworks = await getAdminArtworks();
 
-  return <AdminDashboard artworks={artworks} />;
+  return (
+    <>
+      <AdminUploadNotice status={envStatus} />
+      <AdminDashboard artworks={artworks} />
+    </>
+  );
 }

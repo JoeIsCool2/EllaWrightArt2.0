@@ -1,7 +1,9 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getAllArtworks } from "@/lib/artworks/service";
+import { getEnvSetupStatus } from "@/lib/env";
+import { getAdminArtworkById } from "@/lib/artworks/service";
 import { AdminArtworkFormWrapper } from "@/components/admin/AdminArtworkFormWrapper";
+import { AdminUploadNotice } from "@/components/admin/AdminUploadNotice";
 
 interface EditArtworkPageProps {
   params: Promise<{ id: string }>;
@@ -17,14 +19,17 @@ export default async function EditArtworkPage({ params }: EditArtworkPageProps) 
   if (!user) redirect("/admin/login");
 
   const { id } = await params;
-  const artworks = await getAllArtworks();
-  const artwork = artworks.find((a) => a.id === id);
+  const artwork = await getAdminArtworkById(id);
 
   if (!artwork) notFound();
 
+  const envStatus = getEnvSetupStatus();
+
   return (
     <div>
-      <h1 className="font-serif text-3xl text-teal mb-8">Edit Artwork</h1>
+      <AdminUploadNotice status={envStatus} />
+      <h1 className="font-serif text-3xl sm:text-4xl text-teal mb-2">Edit Artwork</h1>
+      <p className="text-teal/60 mb-8">{artwork.title}</p>
       <AdminArtworkFormWrapper artwork={artwork} mode="edit" />
     </div>
   );

@@ -31,9 +31,9 @@ export function ArtworkCard({ artwork, showArrow = false }: ArtworkCardProps) {
           </span>
         )}
       </div>
-      <div className="p-4 md:p-5 flex items-start justify-between gap-2 min-h-[6.5rem]">
+      <div className="p-4 md:p-5 flex items-start justify-between gap-2 min-h-[7rem]">
         <div className="min-w-0 flex-1">
-          <h3 className="font-serif text-base md:text-lg text-teal group-hover:text-coral transition-colors line-clamp-3 leading-snug">
+          <h3 className="font-serif text-base md:text-lg text-teal group-hover:text-coral transition-colors line-clamp-3 leading-snug min-h-[3.75rem]">
             {artwork.title}
           </h3>
           <p className="text-xs md:text-sm text-teal/60 mt-2 line-clamp-2 leading-relaxed">

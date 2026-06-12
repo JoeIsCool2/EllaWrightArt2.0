@@ -25,7 +25,9 @@ export default function AdminProtectedLayout({
           </div>
         </div>
       </header>
-      <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8">{children}</div>
+      <main className="min-h-[calc(100vh-4.5rem)] bg-ivory">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8">{children}</div>
+      </main>
     </>
   );
 }

@@ -12,15 +12,13 @@ interface FeaturedArtworkFrameProps {
   compact?: boolean;
 }
 
-/**
- * Featured artwork display — shows the full piece without awkward cropping.
- */
+/** Featured artwork — full piece visible, contained elegantly. */
 export function FeaturedArtworkFrame({
   artwork,
   priority = false,
   sizes = "(max-width: 1024px) 100vw, 40vw",
   className = "",
-  maxWidthClass = "max-w-[min(100%,380px)] lg:max-w-[440px]",
+  maxWidthClass = "max-w-[min(100%,320px)] sm:max-w-[380px] lg:max-w-[440px]",
   compact = false,
 }: FeaturedArtworkFrameProps) {
   return (
@@ -35,8 +33,8 @@ export function FeaturedArtworkFrame({
         className={cn(
           "relative w-full bg-ivory",
           compact
-            ? "aspect-[4/5] max-h-[280px]"
-            : "aspect-[4/5] max-h-[min(62vh,520px)] sm:max-h-[min(68vh,560px)]"
+            ? "aspect-[4/5] max-h-[240px]"
+            : "aspect-[4/5] max-h-[280px] sm:max-h-[360px] lg:max-h-[min(68vh,520px)]"
         )}
       >
         <ProtectedArtworkImage

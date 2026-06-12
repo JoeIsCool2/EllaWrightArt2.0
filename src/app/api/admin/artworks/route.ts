@@ -1,15 +1,20 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/supabase/admin";
+import { ensureUniqueSlug, friendlyDatabaseError } from "@/lib/artworks/admin-api";
 import { sanitizeText, LIMITS } from "@/lib/validation";
 
 function validateArtworkBody(body: Record<string, unknown>): string | null {
   const title = sanitizeText(body.title, LIMITS.name);
   const slug = sanitizeText(body.slug, 120);
   const imageUrl = sanitizeText(body.image_url, 2048);
+  const size = sanitizeText(body.size, LIMITS.size);
+  const medium = sanitizeText(body.medium, 100);
 
-  if (!title || !slug || !imageUrl) {
-    return "Title, slug, and image are required.";
-  }
+  if (!title) return "Title is required.";
+  if (!slug) return "Slug is required.";
+  if (!imageUrl) return "Please upload an artwork image before saving.";
+  if (!size) return "Size is required.";
+  if (!medium) return "Medium is required.";
 
   if (imageUrl.startsWith("blob:")) {
     return "Image must be uploaded to storage before saving.";
@@ -17,7 +22,12 @@ function validateArtworkBody(body: Record<string, unknown>): string | null {
 
   const validCategories = ["spiritual", "landscapes", "women-motherhood"];
   if (!validCategories.includes(String(body.category))) {
-    return "Invalid category.";
+    return "Please choose a valid category.";
+  }
+
+  const year = Number(body.year);
+  if (!year || year < 1900 || year > 2100) {
+    return "Please enter a valid year.";
   }
 
   return null;
@@ -33,18 +43,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
+    const uniqueSlug = await ensureUniqueSlug(
+      supabase,
+      sanitizeText(body.slug, 120)
+    );
+
     const { data, error } = await supabase
       .from("artworks")
       .insert({
         title: sanitizeText(body.title, LIMITS.name),
-        slug: sanitizeText(body.slug, 120),
+        slug: uniqueSlug,
         category: body.category,
         medium: sanitizeText(body.medium, 100) || "Oil on Canvas",
         size: sanitizeText(body.size, LIMITS.size),
-        year: Number(body.year) || new Date().getFullYear(),
+        year: Number(body.year),
         description: sanitizeText(body.description, LIMITS.description),
         image_url: sanitizeText(body.image_url, 2048),
-        image_alt: sanitizeText(body.image_alt, 200) || sanitizeText(body.title, LIMITS.name),
+        image_alt:
+          sanitizeText(body.image_alt, 200) || sanitizeText(body.title, LIMITS.name),
         object_position:
           sanitizeText(body.object_position, 80) || "center center",
         is_available: Boolean(body.is_available),
@@ -58,7 +74,11 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error("[artworks] Create failed:", error.message);
+      return NextResponse.json(
+        { error: friendlyDatabaseError(error.message) },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json(data);

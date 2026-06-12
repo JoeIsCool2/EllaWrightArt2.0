@@ -1,127 +1,196 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { Upload, X } from "lucide-react";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
-import { MAX_ARTWORK_FILE_BYTES } from "@/lib/validation";
+import { Upload, X, RefreshCw } from "lucide-react";
+import {
+  ALLOWED_ARTWORK_MIME_TYPES,
+  MAX_ARTWORK_FILE_BYTES,
+} from "@/lib/validation";
 
 interface ImageUploadProps {
   value: string;
+  slug: string;
   onChange: (url: string) => void;
   onAltChange?: (alt: string) => void;
+  onUploadError?: (message: string) => void;
 }
 
-export function ImageUpload({ value, onChange, onAltChange }: ImageUploadProps) {
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
-  const supabaseReady = isSupabaseConfigured();
+const MAX_MB = Math.round(MAX_ARTWORK_FILE_BYTES / (1024 * 1024));
+const ACCEPT = ALLOWED_ARTWORK_MIME_TYPES.join(",");
 
-  async function handleUpload(file: File) {
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+export function ImageUpload({
+  value,
+  slug,
+  onChange,
+  onAltChange,
+  onUploadError,
+}: ImageUploadProps) {
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [error, setError] = useState("");
+  const [selectedFile, setSelectedFile] = useState<{
+    name: string;
+    size: number;
+  } | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const reportError = useCallback(
+    (message: string) => {
+      setError(message);
+      onUploadError?.(message);
+    },
+    [onUploadError]
+  );
+
+  async function uploadFile(file: File) {
     setUploading(true);
     setError("");
+    setSelectedFile({ name: file.name, size: file.size });
 
-    if (!file.type.startsWith("image/")) {
-      setError("Please upload an image file (JPEG, PNG, or WebP).");
+    if (!(ALLOWED_ARTWORK_MIME_TYPES as readonly string[]).includes(file.type)) {
+      reportError("Unsupported file type. Please upload JPG, JPEG, PNG, or WebP.");
       setUploading(false);
       return;
     }
 
     if (file.size > MAX_ARTWORK_FILE_BYTES) {
-      setError("Image must be 15 MB or smaller.");
+      reportError(`Image must be ${MAX_MB} MB or smaller.`);
       setUploading(false);
       return;
     }
 
-    const supabase = createClient();
-    if (!supabase) {
-      setError(
-        "Image upload requires Supabase. Please configure your environment variables."
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("slug", slug || "artwork");
+
+    try {
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        reportError(result.error || "Upload failed. Please try again.");
+        setUploading(false);
+        return;
+      }
+
+      onChange(result.url);
+      onAltChange?.(
+        file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ")
       );
+      setSelectedFile(null);
+    } catch {
+      reportError("Network error while uploading. Check your connection and try again.");
+    } finally {
       setUploading(false);
-      return;
     }
+  }
 
-    const ext = file.name.split(".").pop() || "jpg";
-    const fileName = `artworks/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  function handleFileSelect(file: File | undefined) {
+    if (file) uploadFile(file);
+  }
 
-    const { error: uploadError } = await supabase.storage
-      .from("artwork-images")
-      .upload(fileName, file, { upsert: false, contentType: file.type });
-
-    if (uploadError) {
-      setError(uploadError.message);
-      setUploading(false);
-      return;
-    }
-
-    const { data } = supabase.storage
-      .from("artwork-images")
-      .getPublicUrl(fileName);
-
-    onChange(data.publicUrl);
-    onAltChange?.(file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
-    setUploading(false);
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFileSelect(file);
   }
 
   return (
     <div className="space-y-3">
-      {!supabaseReady && (
-        <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-          Supabase is not connected. Image upload will be available once
-          environment variables are configured.
-        </p>
-      )}
-
       {value ? (
-        <div className="relative w-full max-w-xs aspect-[4/5] rounded-xl overflow-hidden border border-teal/10">
-          <Image src={value} alt="Artwork preview" fill className="object-cover" />
-          <button
-            type="button"
-            onClick={() => onChange("")}
-            className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 text-teal hover:text-coral"
-            aria-label="Remove image"
-          >
-            <X size={16} />
-          </button>
+        <div className="space-y-3">
+          <div className="relative w-full aspect-[4/5] max-w-sm rounded-xl overflow-hidden border border-teal/10 bg-cream/30 shadow-[var(--shadow-soft)]">
+            <Image
+              src={value}
+              alt="Artwork preview"
+              fill
+              className="object-contain"
+              sizes="(max-width: 640px) 100vw, 320px"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full border border-teal/20 text-teal hover:border-coral/40 hover:text-coral transition-colors disabled:opacity-50"
+            >
+              <RefreshCw size={16} aria-hidden="true" />
+              {uploading ? "Uploading..." : "Replace Image"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onChange("");
+                setSelectedFile(null);
+                setError("");
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full border border-teal/10 text-teal/60 hover:text-red-500 hover:border-red-200 transition-colors"
+            >
+              <X size={16} aria-hidden="true" />
+              Remove
+            </button>
+          </div>
         </div>
       ) : (
         <div
-          className="border-2 border-dashed border-teal/20 rounded-xl p-8 text-center cursor-pointer hover:border-coral/40 transition-colors"
-          onClick={() => supabaseReady && fileRef.current?.click()}
-          onKeyDown={(e) =>
-            e.key === "Enter" && supabaseReady && fileRef.current?.click()
-          }
+          className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
+            dragOver
+              ? "border-coral/50 bg-coral/5"
+              : "border-teal/20 hover:border-coral/40"
+          } ${uploading ? "opacity-70 pointer-events-none" : "cursor-pointer"}`}
+          onClick={() => !uploading && fileRef.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={handleDrop}
+          onKeyDown={(e) => e.key === "Enter" && fileRef.current?.click()}
           role="button"
           tabIndex={0}
           aria-label="Upload artwork image"
         >
-          <Upload className="mx-auto text-teal/40 mb-2" size={28} aria-hidden="true" />
-          <p className="text-sm text-teal/60">
-            {uploading
-              ? "Uploading..."
-              : supabaseReady
-                ? "Click to upload artwork image"
-                : "Connect Supabase to enable uploads"}
+          <Upload className="mx-auto text-teal/40 mb-3" size={32} aria-hidden="true" />
+          <p className="text-sm font-medium text-teal">
+            {uploading ? "Uploading your image..." : "Drag & drop or click to upload"}
           </p>
-          <p className="text-xs text-teal/40 mt-1">JPEG, PNG, or WebP · Max 15 MB</p>
+          <p className="text-xs text-teal/50 mt-2">
+            JPG, JPEG, PNG, or WebP · Max {MAX_MB} MB
+          </p>
+          {selectedFile && uploading && (
+            <p className="text-xs text-teal/60 mt-3">
+              {selectedFile.name} · {formatFileSize(selectedFile.size)}
+            </p>
+          )}
         </div>
       )}
 
       <input
         ref={fileRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
+        accept={ACCEPT}
         className="hidden"
         onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleUpload(file);
+          handleFileSelect(e.target.files?.[0]);
+          e.target.value = "";
         }}
       />
 
       {error && (
-        <p className="text-red-600 text-sm" role="alert">
+        <p className="text-red-600 text-sm bg-red-50 border border-red-100 rounded-lg px-4 py-3" role="alert">
           {error}
         </p>
       )}

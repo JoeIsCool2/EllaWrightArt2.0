@@ -34,9 +34,9 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="py-6 md:py-12 lg:py-14 overflow-x-hidden">
+      <section className="py-5 md:py-12 lg:py-14 overflow-x-hidden">
         <LayoutContainer>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-10 lg:gap-16 items-start lg:items-center">
             <div className="animate-fade-in text-center lg:text-left">
               <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[3.5rem] text-teal leading-[1.1] mb-4">
                 EllaWrightsArt
@@ -55,7 +55,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="animate-fade-in-delay w-full max-w-[340px] sm:max-w-[380px] mx-auto lg:max-w-[440px] lg:mx-0 lg:justify-self-end">
+            <div className="w-full max-w-[300px] sm:max-w-[340px] mx-auto lg:max-w-[440px] lg:mx-0 lg:justify-self-end">
               <FeaturedArtworkFrame
                 artwork={featured}
                 priority

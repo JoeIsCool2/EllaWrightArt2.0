@@ -87,6 +87,23 @@ export async function getAdminArtworks(): Promise<Artwork[]> {
   return (data ?? []).map(mapRow);
 }
 
+/** Admin-only: fetch a single artwork by id from Supabase. */
+export async function getAdminArtworkById(id: string): Promise<Artwork | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  const supabase = await createClient();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from("artworks")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return data ? mapRow(data) : null;
+}
+
 export async function getArtworkBySlug(slug: string): Promise<Artwork | null> {
   const artworks = await getAllArtworks();
   return artworks.find((a) => a.slug === slug) ?? null;
@@ -113,15 +130,28 @@ export async function getRelatedArtworks(
   const artworks = await getAllArtworks();
   const others = artworks.filter((a) => a.id !== artwork.id);
 
-  const sameCategory = others.filter((a) => a.category === artwork.category);
+  const sameCategory = others
+    .filter((a) => a.category === artwork.category)
+    .sort((a, b) => a.display_order - b.display_order);
+
   if (sameCategory.length >= limit) {
     return sameCategory.slice(0, limit);
   }
 
-  const differentCategory = others.filter(
-    (a) => a.category !== artwork.category
-  );
-  return [...sameCategory, ...differentCategory].slice(0, limit);
+  const relatedCategories: ArtworkCategory[] =
+    artwork.category === "spiritual"
+      ? ["women-motherhood", "landscapes"]
+      : artwork.category === "women-motherhood"
+        ? ["spiritual", "landscapes"]
+        : ["spiritual", "women-motherhood"];
+
+  const extras = relatedCategories
+    .flatMap((cat) =>
+      others.filter((a) => a.category === cat && !sameCategory.includes(a))
+    )
+    .sort((a, b) => a.display_order - b.display_order);
+
+  return [...sameCategory, ...extras].slice(0, limit);
 }
 
 // Admin mutations (Supabase only)

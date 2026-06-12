@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { EMAIL } from "./constants";
+import { getContactEmail } from "./env";
 
 function getResend() {
   const apiKey = process.env.RESEND_API_KEY;
@@ -36,7 +36,7 @@ export async function sendEmail({
 
   const { error } = await resend.emails.send({
     from,
-    to: EMAIL,
+    to: getContactEmail(),
     subject,
     html,
     replyTo,
