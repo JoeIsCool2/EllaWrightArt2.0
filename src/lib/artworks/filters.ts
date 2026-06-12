@@ -30,6 +30,54 @@ export interface CategoryPreview {
   objectPosition: string;
 }
 
+const ABOUT_COLLAGE_SLUGS = [
+  "heavenly-hands",
+  "worshipping-the-living-water",
+  "making-waves",
+  "mary-and-jesus",
+] as const;
+
+/** Curated artworks for the About page 2×2 collage — one spiritual, landscape, and motherhood highlight. */
+export function getAboutCollageArtworks(artworks: Artwork[]): Artwork[] {
+  const used = new Set<string>();
+  const selected: Artwork[] = [];
+
+  for (const slug of ABOUT_COLLAGE_SLUGS) {
+    const artwork = artworks.find((a) => a.slug === slug);
+    if (artwork && !used.has(artwork.id)) {
+      used.add(artwork.id);
+      selected.push(artwork);
+    }
+  }
+
+  if (selected.length < 4) {
+    const categories: Artwork["category"][] = [
+      "spiritual",
+      "landscapes",
+      "women-motherhood",
+    ];
+    for (const category of categories) {
+      if (selected.length >= 4) break;
+      const extra = artworks.find(
+        (a) => a.category === category && !used.has(a.id)
+      );
+      if (extra) {
+        used.add(extra.id);
+        selected.push(extra);
+      }
+    }
+  }
+
+  while (selected.length < 4) {
+    const extra = artworks.find((a) => !used.has(a.id));
+    if (!extra) break;
+    used.add(extra.id);
+    selected.push(extra);
+  }
+
+  return selected.slice(0, 4);
+}
+
 export function getCategoryPreviewArtworks(
   artworks: Artwork[]
 ): CategoryPreview[] {
