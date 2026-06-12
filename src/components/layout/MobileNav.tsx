@@ -124,8 +124,12 @@ export function MobileNav() {
     <>
       <button
         type="button"
-        onClick={() => setOpen((prev) => !prev)}
-        className="md:hidden relative z-[210] p-2 -mr-2 text-teal hover:text-coral transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/40"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (open) close();
+          else setOpen(true);
+        }}
+        className="md:hidden relative z-[220] p-2 -mr-2 text-teal hover:text-coral transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/40 pointer-events-auto"
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         aria-controls="mobile-nav-panel"
