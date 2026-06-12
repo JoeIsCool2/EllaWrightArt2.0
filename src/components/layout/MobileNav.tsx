@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -8,9 +9,38 @@ import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { NAV_LINKS, INSTAGRAM_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
+const NAVBAR_HEIGHT = "3.5rem"; // h-14 — matches Navbar mobile height
+
+function subscribeToClient() {
+  return () => {};
+}
+
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
+function isLinkActive(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  if (href === "/gallery") {
+    return pathname === "/gallery" || pathname.startsWith("/gallery/");
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function MobileNav() {
   const [open, setOpen] = useState(false);
+  const mounted = useSyncExternalStore(
+    subscribeToClient,
+    getClientSnapshot,
+    getServerSnapshot
+  );
   const pathname = usePathname();
+
+  const close = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     if (!open) return;
@@ -19,81 +49,98 @@ export function MobileNav() {
     document.body.style.overflow = "hidden";
 
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") close();
+    }
+
+    function onPopState() {
+      close();
     }
 
     document.addEventListener("keydown", onKeyDown);
+    window.addEventListener("popstate", onPopState);
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("popstate", onPopState);
     };
-  }, [open]);
+  }, [open, close]);
+
+  const menuPortal =
+    open && mounted
+      ? createPortal(
+          <>
+            <button
+              type="button"
+              className="fixed inset-0 z-[100] bg-teal/25 md:hidden"
+              style={{ top: NAVBAR_HEIGHT }}
+              onClick={close}
+              aria-label="Close menu"
+              tabIndex={-1}
+            />
+            <div
+              id="mobile-nav-panel"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile navigation"
+              className="fixed inset-x-0 z-[101] md:hidden bg-ivory border-b border-teal/10 shadow-[var(--shadow-card)] overflow-y-auto overflow-x-hidden"
+              style={{
+                top: NAVBAR_HEIGHT,
+                maxHeight: `calc(100vh - ${NAVBAR_HEIGHT})`,
+              }}
+            >
+              <nav
+                className="flex flex-col px-5 py-4 gap-0.5"
+                aria-label="Mobile navigation"
+              >
+                {NAV_LINKS.map((link) => {
+                  const isActive = isLinkActive(pathname, link.href);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={close}
+                      prefetch
+                      className={cn(
+                        "py-3.5 px-3 rounded-lg text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/40",
+                        isActive
+                          ? "text-teal border-l-2 border-coral bg-teal/[0.04]"
+                          : "text-teal/80 hover:bg-teal/[0.04] border-l-2 border-transparent"
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 py-3.5 px-3 text-teal/80 hover:bg-teal/[0.04] rounded-lg border-l-2 border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/40"
+                  onClick={close}
+                >
+                  <InstagramIcon size={20} />
+                  Instagram
+                </a>
+              </nav>
+            </div>
+          </>,
+          document.body
+        )
+      : null;
 
   return (
     <div className="md:hidden">
       <button
         type="button"
-        onClick={() => setOpen(!open)}
-        className="p-2 text-teal hover:text-coral transition-colors"
+        onClick={() => setOpen((prev) => !prev)}
+        className="relative z-[110] p-2 -mr-2 text-teal hover:text-coral transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/40"
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         aria-controls="mobile-nav-panel"
       >
-        {open ? <X size={24} /> : <Menu size={24} />}
+        {open ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
       </button>
-
-      {open && (
-        <>
-          <div
-            className="fixed inset-0 bg-teal/20 backdrop-blur-sm z-40"
-            onClick={() => setOpen(false)}
-            aria-hidden="true"
-          />
-          <div
-            id="mobile-nav-panel"
-            className="fixed top-14 md:top-16 right-0 left-0 bg-ivory border-b border-teal/10 shadow-lg z-50 animate-fade-in max-h-[calc(100vh-3.5rem)] overflow-y-auto"
-          >
-            <nav className="flex flex-col p-6 gap-1" aria-label="Mobile navigation">
-              {NAV_LINKS.map((link) => {
-                const isActive =
-                  link.href === "/"
-                    ? pathname === "/"
-                    : link.href === "/gallery"
-                      ? pathname === "/gallery" ||
-                        pathname.startsWith("/gallery/")
-                      : pathname === link.href ||
-                        pathname.startsWith(`${link.href}/`);
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    prefetch
-                    className={cn(
-                      "py-3 px-4 rounded-lg text-lg font-medium transition-colors",
-                      isActive
-                        ? "text-teal bg-coral/10"
-                        : "text-teal/80 hover:bg-teal/5"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-              <a
-                href={INSTAGRAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 py-3 px-4 text-teal/80 hover:bg-teal/5 rounded-lg"
-                onClick={() => setOpen(false)}
-              >
-                <InstagramIcon size={20} />
-                Instagram
-              </a>
-            </nav>
-          </div>
-        </>
-      )}
+      {menuPortal}
     </div>
   );
 }

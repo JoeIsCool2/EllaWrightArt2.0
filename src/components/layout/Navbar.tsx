@@ -13,14 +13,14 @@ export function Navbar() {
   if (pathname.startsWith("/admin")) return null;
 
   return (
-    <header className="sticky top-0 z-50 bg-ivory/95 backdrop-blur-sm border-b border-teal/5">
+    <header className="sticky top-0 z-[110] bg-ivory md:bg-ivory/95 md:backdrop-blur-sm border-b border-teal/5 shadow-[0_1px_0_rgba(13,59,63,0.04)]">
       <nav
         className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8 flex items-center justify-between h-14 md:h-16"
         aria-label="Main navigation"
       >
         <Link
           href="/"
-          className="font-serif text-xl md:text-2xl text-teal hover:text-teal-light transition-colors"
+          className="relative z-[110] font-serif text-xl md:text-2xl text-teal hover:text-teal-light transition-colors"
         >
           {SITE_NAME}
         </Link>
