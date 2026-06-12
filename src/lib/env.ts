@@ -47,9 +47,7 @@ export function getMissingResendEnvVars(): string[] {
   const fromEmail = process.env.RESEND_FROM_EMAIL?.trim();
 
   if (!apiKey || isPlaceholder(apiKey)) missing.push("RESEND_API_KEY");
-  if (!fromEmail || isPlaceholder(fromEmail) || !isResendFromEmailValid()) {
-    missing.push("RESEND_FROM_EMAIL");
-  }
+  if (!fromEmail || isPlaceholder(fromEmail)) missing.push("RESEND_FROM_EMAIL");
   return missing;
 }
 
@@ -83,22 +81,35 @@ function stripWrappingQuotes(value: string): string {
   return value;
 }
 
-/** Validated Resend `from` address — server only. */
+function normalizeFromInput(value: string): string {
+  return value
+    .replace(/^mailto:/i, "")
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/[‹›]/g, (char) => (char === "‹" ? "<" : ">"))
+    .trim();
+}
+
+/** Resend `from` address — server only. Falls back safely if env format is wrong. */
 export function getResendFromEmail(): string {
-  const raw = process.env.RESEND_FROM_EMAIL?.trim();
   const fallback = "EllaWrightsArt <onboarding@resend.dev>";
+  const raw = process.env.RESEND_FROM_EMAIL?.trim();
 
   if (!raw || isPlaceholder(raw)) {
     return fallback;
   }
 
-  const value = stripWrappingQuotes(raw);
+  const value = normalizeFromInput(stripWrappingQuotes(raw));
 
-  if (RESEND_EMAIL_ONLY.test(value) || RESEND_NAMED_FORMAT.test(value)) {
+  if (RESEND_EMAIL_ONLY.test(value)) {
+    return `EllaWrightsArt <${value}>`;
+  }
+
+  if (RESEND_NAMED_FORMAT.test(value)) {
     return value;
   }
 
-  // Fix common mistake: "Name email@domain.com" without angle brackets
+  // "Name email@domain.com" without angle brackets
   const looseMatch = value.match(
     /^(.+?)\s+([^\s<>"']+@[^\s<>"']+\.[^\s<>"']+)$/
   );
@@ -106,18 +117,18 @@ export function getResendFromEmail(): string {
     return `${looseMatch[1].trim()} <${looseMatch[2]}>`;
   }
 
-  throw new Error(
-    "RESEND_FROM_EMAIL is not formatted correctly. Use EllaWrightsArt <hello@yourdomain.com> or hello@yourdomain.com"
+  // Extract any email address buried in the string
+  const emailMatch = value.match(
+    /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/
   );
-}
-
-export function isResendFromEmailValid(): boolean {
-  try {
-    getResendFromEmail();
-    return true;
-  } catch {
-    return false;
+  if (emailMatch) {
+    return `EllaWrightsArt <${emailMatch[0]}>`;
   }
+
+  console.warn(
+    "[email] RESEND_FROM_EMAIL could not be parsed; using Resend test sender."
+  );
+  return fallback;
 }
 
 export function getMissingPublicSiteEnvVars(): string[] {

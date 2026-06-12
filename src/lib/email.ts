@@ -2,8 +2,8 @@ import { Resend } from "resend";
 import { getContactEmail, getResendFromEmail } from "./env";
 
 function getResend() {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return null;
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey || apiKey.includes("your-")) return null;
   return new Resend(apiKey);
 }
 
@@ -31,14 +31,7 @@ export async function sendEmail({
     );
   }
 
-  let from: string;
-  try {
-    from = getResendFromEmail();
-  } catch {
-    throw new Error(
-      "Email sender is misconfigured. In Vercel, set RESEND_FROM_EMAIL to: EllaWrightsArt <onboarding@resend.dev> (for testing) or EllaWrightsArt <hello@your-verified-domain.com> (for production)."
-    );
-  }
+  const from = getResendFromEmail();
 
   const { error } = await resend.emails.send({
     from,
@@ -55,7 +48,12 @@ export async function sendEmail({
   if (error) {
     if (error.message.includes("Invalid `from` field")) {
       throw new Error(
-        "Email sender address is invalid. In Vercel → Environment Variables, set RESEND_FROM_EMAIL exactly like: EllaWrightsArt <onboarding@resend.dev> — include the angle brackets around the email."
+        "Email sender address is invalid. In Vercel, delete RESEND_FROM_EMAIL and redeploy to use the default test sender, or set it exactly to: EllaWrightsArt <onboarding@resend.dev>"
+      );
+    }
+    if (error.message.includes("domain") || error.message.includes("verified")) {
+      throw new Error(
+        "The sender domain is not verified in Resend yet. For testing, set RESEND_FROM_EMAIL to EllaWrightsArt <onboarding@resend.dev> and redeploy."
       );
     }
     throw new Error(error.message);
