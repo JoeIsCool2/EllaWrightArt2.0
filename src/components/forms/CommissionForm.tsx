@@ -89,9 +89,9 @@ export function CommissionForm() {
 
   if (status === "success") {
     return (
-      <div className="bg-white rounded-2xl p-8 shadow-[var(--shadow-soft)] text-center">
+      <div className="bg-white rounded-2xl p-6 md:p-8 shadow-[var(--shadow-soft)] border border-teal/[0.05] text-center max-w-xl">
         <h3 className="font-serif text-2xl text-teal mb-3">Request Submitted</h3>
-        <p className="text-teal/70 mb-6">
+        <p className="text-teal/70 mb-6 leading-relaxed">
           Thank you for your commission inquiry! Ella will review your request
           and be in touch within 3–5 business days.
         </p>
@@ -105,13 +105,16 @@ export function CommissionForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-2xl p-6 md:p-8 shadow-[var(--shadow-soft)] space-y-5"
+      className="bg-white rounded-2xl p-5 md:p-6 lg:p-7 shadow-[var(--shadow-soft)] border border-teal/[0.05] space-y-4 md:space-y-5 max-w-2xl"
       noValidate
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="commission-name" className="block text-sm font-medium text-teal mb-1.5">
-            Name
+          <label
+            htmlFor="commission-name"
+            className="block text-sm font-medium text-teal mb-1.5"
+          >
+            Name <span className="text-coral">*</span>
           </label>
           <input
             id="commission-name"
@@ -124,8 +127,11 @@ export function CommissionForm() {
           />
         </div>
         <div>
-          <label htmlFor="commission-email" className="block text-sm font-medium text-teal mb-1.5">
-            Email
+          <label
+            htmlFor="commission-email"
+            className="block text-sm font-medium text-teal mb-1.5"
+          >
+            Email <span className="text-coral">*</span>
           </label>
           <input
             id="commission-email"
@@ -139,9 +145,12 @@ export function CommissionForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label htmlFor="commission-budget" className="block text-sm font-medium text-teal mb-1.5">
+          <label
+            htmlFor="commission-budget"
+            className="block text-sm font-medium text-teal mb-1.5"
+          >
             Budget
           </label>
           <input
@@ -149,12 +158,15 @@ export function CommissionForm() {
             name="budget"
             type="text"
             maxLength={100}
-            placeholder="e.g. $500 - $1000"
+            placeholder="e.g. $500 – $1,000"
             className="input-field"
           />
         </div>
         <div>
-          <label htmlFor="commission-size" className="block text-sm font-medium text-teal mb-1.5">
+          <label
+            htmlFor="commission-size"
+            className="block text-sm font-medium text-teal mb-1.5"
+          >
             Desired Size
           </label>
           <input
@@ -167,7 +179,10 @@ export function CommissionForm() {
           />
         </div>
         <div>
-          <label htmlFor="commission-deadline" className="block text-sm font-medium text-teal mb-1.5">
+          <label
+            htmlFor="commission-deadline"
+            className="block text-sm font-medium text-teal mb-1.5"
+          >
             Deadline
           </label>
           <input
@@ -175,7 +190,7 @@ export function CommissionForm() {
             name="deadline"
             type="text"
             maxLength={100}
-            placeholder="Preferred deadline"
+            placeholder="Preferred timeline"
             className="input-field"
             autoComplete="off"
           />
@@ -183,7 +198,10 @@ export function CommissionForm() {
       </div>
 
       <div>
-        <label htmlFor="commission-style" className="block text-sm font-medium text-teal mb-1.5">
+        <label
+          htmlFor="commission-style"
+          className="block text-sm font-medium text-teal mb-1.5"
+        >
           Art Style / Subject
         </label>
         <input
@@ -191,32 +209,35 @@ export function CommissionForm() {
           name="style"
           type="text"
           maxLength={200}
-          placeholder="Spiritual, Landscape, Motherhood, Abstract..."
+          placeholder="Spiritual, landscape, motherhood, portrait..."
           className="input-field"
         />
       </div>
 
       <div>
-        <label htmlFor="commission-description" className="block text-sm font-medium text-teal mb-1.5">
-          Description
+        <label
+          htmlFor="commission-description"
+          className="block text-sm font-medium text-teal mb-1.5"
+        >
+          Description <span className="text-coral">*</span>
         </label>
         <textarea
           id="commission-description"
           name="description"
           required
-          rows={4}
+          rows={5}
           maxLength={5000}
-          placeholder="Tell Ella about your vision..."
-          className="input-field"
+          placeholder="Tell Ella about your vision, inspiration, and what this piece means to you..."
+          className="input-field min-h-[120px]"
         />
       </div>
 
       <div>
         <label id="reference-label" className="block text-sm font-medium text-teal mb-1.5">
-          Reference Photo Upload
+          Reference Photo <span className="text-teal/40 font-normal">(optional)</span>
         </label>
         <div
-          className="border-2 border-dashed border-teal/20 rounded-xl p-8 text-center cursor-pointer hover:border-coral/40 transition-colors"
+          className="border border-dashed border-teal/20 rounded-xl p-5 md:p-6 text-center cursor-pointer hover:border-coral/35 hover:bg-cream/30 transition-colors"
           onClick={() => fileRef.current?.click()}
           onKeyDown={(e) => e.key === "Enter" && fileRef.current?.click()}
           onDragOver={(e) => e.preventDefault()}
@@ -233,11 +254,11 @@ export function CommissionForm() {
           tabIndex={0}
           aria-labelledby="reference-label"
         >
-          <Upload className="mx-auto text-teal/40 mb-2" size={28} aria-hidden="true" />
-          <p className="text-sm text-teal/60">
+          <Upload className="mx-auto text-teal/35 mb-2" size={24} aria-hidden="true" />
+          <p className="text-sm text-teal/65">
             {fileName || "Drag and drop or click to upload"}
           </p>
-          <p className="text-xs text-teal/40 mt-1">Optional · JPEG, PNG, or WebP · Max 5 MB</p>
+          <p className="text-xs text-teal/40 mt-1">JPEG, PNG, or WebP · Max 5 MB</p>
           <input
             ref={fileRef}
             type="file"
@@ -255,8 +276,11 @@ export function CommissionForm() {
       </div>
 
       <div>
-        <label htmlFor="commission-instagram" className="block text-sm font-medium text-teal mb-1.5">
-          Instagram Handle <span className="text-teal/40">(optional)</span>
+        <label
+          htmlFor="commission-instagram"
+          className="block text-sm font-medium text-teal mb-1.5"
+        >
+          Instagram Handle <span className="text-teal/40 font-normal">(optional)</span>
         </label>
         <input
           id="commission-instagram"
@@ -269,20 +293,28 @@ export function CommissionForm() {
       </div>
 
       {status === "error" && (
-        <p className="text-red-600 text-sm" role="alert">
+        <p
+          className="text-red-600 text-sm bg-red-50 border border-red-100 rounded-lg px-4 py-3"
+          role="alert"
+        >
           {errorMessage}
         </p>
       )}
 
-      <Button
-        type="submit"
-        variant="coral"
-        size="lg"
-        className="w-full"
-        disabled={status === "loading"}
-      >
-        {status === "loading" ? "Submitting..." : "Request a Commission"}
-      </Button>
+      <div className="pt-1 space-y-3">
+        <Button
+          type="submit"
+          variant="coral"
+          size="lg"
+          className="w-full sm:w-auto sm:min-w-[220px]"
+          disabled={status === "loading"}
+        >
+          {status === "loading" ? "Submitting..." : "Request a Commission"}
+        </Button>
+        <p className="text-xs text-teal/50 leading-relaxed">
+          Ella will review your request and respond with next steps.
+        </p>
+      </div>
     </form>
   );
 }
