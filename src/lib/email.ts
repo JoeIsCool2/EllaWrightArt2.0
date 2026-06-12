@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { getContactEmail } from "./env";
+import { getContactEmail, getResendFromEmail } from "./env";
 
 function getResend() {
   const apiKey = process.env.RESEND_API_KEY;
@@ -24,13 +24,19 @@ export async function sendEmail({
   attachments?: EmailAttachment[];
 }) {
   const resend = getResend();
-  const from =
-    process.env.RESEND_FROM_EMAIL ||
-    "EllaWrightsArt <onboarding@resend.dev>";
 
   if (!resend) {
     throw new Error(
       "Email is temporarily unavailable. Please email Ella directly at ellawright.artist@gmail.com."
+    );
+  }
+
+  let from: string;
+  try {
+    from = getResendFromEmail();
+  } catch {
+    throw new Error(
+      "Email sender is misconfigured. In Vercel, set RESEND_FROM_EMAIL to: EllaWrightsArt <onboarding@resend.dev> (for testing) or EllaWrightsArt <hello@your-verified-domain.com> (for production)."
     );
   }
 
@@ -47,6 +53,11 @@ export async function sendEmail({
   });
 
   if (error) {
+    if (error.message.includes("Invalid `from` field")) {
+      throw new Error(
+        "Email sender address is invalid. In Vercel → Environment Variables, set RESEND_FROM_EMAIL exactly like: EllaWrightsArt <onboarding@resend.dev> — include the angle brackets around the email."
+      );
+    }
     throw new Error(error.message);
   }
 }

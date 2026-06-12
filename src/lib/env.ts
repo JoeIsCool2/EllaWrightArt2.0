@@ -47,7 +47,9 @@ export function getMissingResendEnvVars(): string[] {
   const fromEmail = process.env.RESEND_FROM_EMAIL?.trim();
 
   if (!apiKey || isPlaceholder(apiKey)) missing.push("RESEND_API_KEY");
-  if (!fromEmail || isPlaceholder(fromEmail)) missing.push("RESEND_FROM_EMAIL");
+  if (!fromEmail || isPlaceholder(fromEmail) || !isResendFromEmailValid()) {
+    missing.push("RESEND_FROM_EMAIL");
+  }
   return missing;
 }
 
@@ -64,6 +66,58 @@ export function getContactEmail(): string {
   const email = process.env.CONTACT_EMAIL?.trim();
   if (email && !isPlaceholder(email)) return email;
   return "ellawright.artist@gmail.com";
+}
+
+const RESEND_EMAIL_ONLY =
+  /^[^\s<>"']+@[^\s<>"']+\.[^\s<>"']+$/;
+const RESEND_NAMED_FORMAT =
+  /^[^<>]+<[^\s<>"']+@[^\s<>"']+\.[^\s<>"']+>$/;
+
+function stripWrappingQuotes(value: string): string {
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
+    return value.slice(1, -1).trim();
+  }
+  return value;
+}
+
+/** Validated Resend `from` address — server only. */
+export function getResendFromEmail(): string {
+  const raw = process.env.RESEND_FROM_EMAIL?.trim();
+  const fallback = "EllaWrightsArt <onboarding@resend.dev>";
+
+  if (!raw || isPlaceholder(raw)) {
+    return fallback;
+  }
+
+  const value = stripWrappingQuotes(raw);
+
+  if (RESEND_EMAIL_ONLY.test(value) || RESEND_NAMED_FORMAT.test(value)) {
+    return value;
+  }
+
+  // Fix common mistake: "Name email@domain.com" without angle brackets
+  const looseMatch = value.match(
+    /^(.+?)\s+([^\s<>"']+@[^\s<>"']+\.[^\s<>"']+)$/
+  );
+  if (looseMatch) {
+    return `${looseMatch[1].trim()} <${looseMatch[2]}>`;
+  }
+
+  throw new Error(
+    "RESEND_FROM_EMAIL is not formatted correctly. Use EllaWrightsArt <hello@yourdomain.com> or hello@yourdomain.com"
+  );
+}
+
+export function isResendFromEmailValid(): boolean {
+  try {
+    getResendFromEmail();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function getMissingPublicSiteEnvVars(): string[] {
