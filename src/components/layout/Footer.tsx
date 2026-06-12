@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Heart, Mail } from "lucide-react";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 import {
   SITE_NAME,
   EMAIL,
@@ -42,7 +43,8 @@ export function Footer() {
       <LayoutContainer className="py-8 md:py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-8">
           <div>
-            <h2 className="font-serif text-2xl text-teal mb-3">{SITE_NAME}</h2>
+            <BrandLogo variant="footer" className="mb-3" />
+            <h2 className="font-serif text-xl text-teal mb-2">{SITE_NAME}</h2>
             <p className="text-teal/70 text-sm leading-relaxed max-w-xs">
               Original oil paintings inspired by femininity, spirituality,
               motherhood, and landscapes.

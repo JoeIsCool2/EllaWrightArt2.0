@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
-import { NAV_LINKS, SITE_NAME, INSTAGRAM_URL } from "@/lib/constants";
+import { BrandLogo } from "@/components/ui/BrandLogo";
+import { NAV_LINKS, INSTAGRAM_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./MobileNav";
 
@@ -20,9 +21,10 @@ export function Navbar() {
       >
         <Link
           href="/"
-          className="relative font-serif text-xl md:text-2xl text-teal hover:text-teal-light transition-colors"
+          className="relative flex items-center shrink-0 min-w-0 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/40 rounded-sm"
+          aria-label="EllaWrightsArt home"
         >
-          {SITE_NAME}
+          <BrandLogo variant="nav" priority />
         </Link>
 
         <div className="hidden md:flex items-center gap-8 lg:gap-10">
