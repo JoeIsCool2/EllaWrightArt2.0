@@ -14,7 +14,7 @@ export function AboutCTA({ className }: AboutCTAProps) {
         id="about-cta-heading"
         className="font-serif text-2xl md:text-3xl text-teal mb-6"
       >
-        Explore Ella&apos;s work
+        Explore EllaWrightArt
       </h2>
       <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center">
         <Button href="/gallery" variant="primary" size="md" className="sm:min-w-[160px]">

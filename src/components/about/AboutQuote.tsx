@@ -18,9 +18,11 @@ export function AboutQuote({ className }: AboutQuoteProps) {
       </p>
       <BrushDivider width="w-10" className="mb-4" />
       <blockquote className="font-serif text-lg md:text-xl text-teal/90 italic leading-relaxed">
-        &ldquo;Art is my way of listening—for beauty, for truth, and for the
-        whispers of something greater than myself.&rdquo;
+        &ldquo;Art washes away from the soul the dust of everyday life.&rdquo;
       </blockquote>
+      <figcaption className="mt-3 text-sm text-teal/55 not-italic font-sans">
+        — Pablo Picasso
+      </figcaption>
     </figure>
   );
 }
