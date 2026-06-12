@@ -105,7 +105,7 @@ export function CommissionForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-2xl p-5 md:p-6 lg:p-7 shadow-[var(--shadow-soft)] border border-teal/[0.05] space-y-4 md:space-y-5 max-w-2xl"
+      className="bg-white rounded-2xl p-5 md:p-6 shadow-[var(--shadow-soft)] border border-teal/[0.05] space-y-4 max-w-none"
       noValidate
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
