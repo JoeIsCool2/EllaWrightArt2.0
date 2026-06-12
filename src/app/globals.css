@@ -52,9 +52,51 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
 }
 
-body > * {
+/* Layout shell only — do not apply to portaled overlays (mobile menu, modals) */
+body > header,
+body > #main-content,
+body > footer {
   position: relative;
   z-index: 1;
+}
+
+/* Mobile navigation portal (rendered via createPortal) */
+#mobile-nav-portal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+}
+
+#mobile-nav-portal[data-open="true"] {
+  pointer-events: auto;
+}
+
+.mobile-nav-backdrop {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 3.5rem;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgba(13, 59, 63, 0.28);
+  cursor: default;
+}
+
+.mobile-nav-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 3.5rem;
+  z-index: 1;
+  background-color: var(--ivory);
+  border-bottom: 1px solid rgba(13, 59, 63, 0.1);
+  box-shadow: var(--shadow-card);
+  max-height: calc(100vh - 3.5rem);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 h1,

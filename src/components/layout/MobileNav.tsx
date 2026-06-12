@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,19 +9,7 @@ import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { NAV_LINKS, INSTAGRAM_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-const NAVBAR_HEIGHT = "3.5rem"; // h-14 — matches Navbar mobile height
-
-function subscribeToClient() {
-  return () => {};
-}
-
-function getClientSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
+const PORTAL_ID = "mobile-nav-portal";
 
 function isLinkActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -31,16 +19,23 @@ function isLinkActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function getPortalNode(): HTMLElement | null {
+  if (typeof document === "undefined") return null;
+  return document.getElementById(PORTAL_ID);
+}
+
 export function MobileNav() {
   const [open, setOpen] = useState(false);
-  const mounted = useSyncExternalStore(
-    subscribeToClient,
-    getClientSnapshot,
-    getServerSnapshot
-  );
   const pathname = usePathname();
 
   const close = useCallback(() => setOpen(false), []);
+
+  useEffect(() => {
+    const node = getPortalNode();
+    if (!node) return;
+    node.dataset.open = open ? "true" : "false";
+    node.setAttribute("aria-hidden", open ? "false" : "true");
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -65,14 +60,15 @@ export function MobileNav() {
     };
   }, [open, close]);
 
-  const menuPortal =
-    open && mounted
+  const portalNode = open ? getPortalNode() : null;
+
+  const menu =
+    open && portalNode
       ? createPortal(
           <>
             <button
               type="button"
-              className="fixed inset-0 z-[100] bg-teal/25 md:hidden"
-              style={{ top: NAVBAR_HEIGHT }}
+              className="mobile-nav-backdrop"
               onClick={close}
               aria-label="Close menu"
               tabIndex={-1}
@@ -82,11 +78,7 @@ export function MobileNav() {
               role="dialog"
               aria-modal="true"
               aria-label="Mobile navigation"
-              className="fixed inset-x-0 z-[101] md:hidden bg-ivory border-b border-teal/10 shadow-[var(--shadow-card)] overflow-y-auto overflow-x-hidden"
-              style={{
-                top: NAVBAR_HEIGHT,
-                maxHeight: `calc(100vh - ${NAVBAR_HEIGHT})`,
-              }}
+              className="mobile-nav-panel"
             >
               <nav
                 className="flex flex-col px-5 py-4 gap-0.5"
@@ -124,23 +116,23 @@ export function MobileNav() {
               </nav>
             </div>
           </>,
-          document.body
+          portalNode
         )
       : null;
 
   return (
-    <div className="md:hidden">
+    <>
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="relative z-[110] p-2 -mr-2 text-teal hover:text-coral transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/40"
+        className="md:hidden relative z-[210] p-2 -mr-2 text-teal hover:text-coral transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/40"
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         aria-controls="mobile-nav-panel"
       >
         {open ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
       </button>
-      {menuPortal}
-    </div>
+      {menu}
+    </>
   );
 }

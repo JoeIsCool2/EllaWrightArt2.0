@@ -61,6 +61,7 @@ export default function RootLayout({
           {children}
         </div>
         <Footer />
+        <div id="mobile-nav-portal" aria-hidden="true" />
       </body>
     </html>
   );
