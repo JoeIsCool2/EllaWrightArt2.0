@@ -13,25 +13,12 @@ import { MAX_ARTWORK_FILE_BYTES, sanitizeText } from "@/lib/validation";
 
 export async function POST(request: Request) {
   try {
-    await requireAuth();
+    const { supabase: authSupabase } = await requireAuth();
 
-    if (!isServiceRoleConfigured()) {
-      return NextResponse.json(
-        {
-          error:
-            "Image upload requires SUPABASE_SERVICE_ROLE_KEY on the server. Add it in Vercel Environment Variables and redeploy.",
-        },
-        { status: 503 }
-      );
-    }
-
-    const supabase = createServiceRoleClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: "Server storage client is not configured." },
-        { status: 503 }
-      );
-    }
+    // Prefer service role when set; otherwise use the logged-in admin session
+    const supabase = isServiceRoleConfigured()
+      ? createServiceRoleClient() ?? authSupabase
+      : authSupabase;
 
     const formData = await request.formData();
     const file = formData.get("file");
@@ -71,10 +58,10 @@ export async function POST(request: Request) {
 
     if (uploadError) {
       console.error("[upload] Storage error:", uploadError.message);
-      return NextResponse.json(
-        { error: friendlyStorageError(uploadError.message) },
-        { status: 400 }
-      );
+      const hint = isServiceRoleConfigured()
+        ? friendlyStorageError(uploadError.message)
+        : `${friendlyStorageError(uploadError.message)} If this persists, add SUPABASE_SERVICE_ROLE_KEY in Vercel and run migration 004_storage_bucket.sql.`;
+      return NextResponse.json({ error: hint }, { status: 400 });
     }
 
     const publicUrl = getPublicArtworkImageUrl(storagePath);

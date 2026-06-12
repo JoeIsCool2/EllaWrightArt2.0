@@ -95,8 +95,7 @@ export function getEnvSetupStatus(): EnvSetupStatus {
 
   return {
     supabaseReady: missingSupabase.length === 0,
-    uploadsReady:
-      missingSupabase.length === 0 && missingServiceRole.length === 0,
+    uploadsReady: missingSupabase.length === 0,
     resendReady: missingResend.length === 0,
     missingSupabase,
     missingServiceRole,
